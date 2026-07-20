@@ -19,7 +19,7 @@ public class DefaultNotifier implements Notifier {
      * @param resolver     selects the adapter for a given request
      * @param interceptors interceptors to apply around each send, <strong>in the order they
      *                     should run</strong> (outermost first) — this class does not sort them;
-     *                     the autoconfiguration orders them by {@code @Order}/{@link org.springframework.core.Ordered}
+     *                     the auto-configuration orders them by {@code @Order}/{@code Ordered}
      */
     public DefaultNotifier(List<ChannelAdapter<?>> adapters, AdapterResolver resolver,
                            List<NotificationInterceptor> interceptors) {
