@@ -1,0 +1,13 @@
+target/
+*.class
+.idea/
+*.iml
+.DS_Store
+
+# Claude Code / session scratch
+.claude/
+.superpowers/
+CLAUDE.md
+
+# docs
+docs/

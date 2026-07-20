@@ -1,0 +1,329 @@
+# spring-notify
+
+**Channel-agnostic notification delivery for Spring Boot.** Send SMS, push, email, and chat
+messages through one small API — your code talks to a *channel*, never to a *provider*.
+Swap Twilio for another SMS gateway, or FCM for APNs, by changing a dependency, not your code.
+
+```java
+notifier.notify(SmsRequest.builder()
+        .to("+421900123456")
+        .from("+421900999888")
+        .message("Your order has shipped")
+        .build());
+```
+
+> Status: `0.1.0-SNAPSHOT` · Java 25 · Spring Boot 4.1 · no runtime dependencies beyond
+> Spring and the provider SDK you choose.
+
+---
+
+## Building
+
+Not yet on Maven Central — build it into your local `~/.m2` first:
+
+```bash
+git clone <repo> && cd spring-notify
+./mvnw install
+```
+
+Then depend on the starter(s) you need, as shown below.
+
+---
+
+## Why
+
+Most apps end up with provider SDKs (`TwilioRestClient`, `FirebaseMessaging`, a `JavaMailSender`,
+a Slack client) threaded directly through business code. Switching providers, adding a channel,
+or testing delivery then means touching every call site.
+
+spring-notify puts a thin, provider-neutral layer in front:
+
+- **One entry point** — inject `Notifier`, call `notify(request)`.
+- **Typed, immutable requests** — `SmsRequest`, `PushRequest`, `EmailRequest`, `ChatRequest`
+  (built with fluent builders; jspecify-annotated, non-null by default).
+- **Providers are plug-ins** — each is a separate starter that contributes one `*Sender` bean.
+  Auto-configuration wires it in when it's configured.
+- **Routing by type** — the request's concrete type selects the channel; no `if/switch` in your code.
+
+---
+
+## Quick start
+
+Say you want to send SMS via Twilio.
+
+**1. Add the provider starter** (it pulls in the SMS channel + the pipeline transitively):
+
+```xml
+<dependency>
+    <groupId>sk.solodev</groupId>
+    <artifactId>notify-spring-boot-starter-sms-twilio</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+</dependency>
+```
+
+**2. Configure the provider** (`application.yml`):
+
+```yaml
+spring:
+  notify:
+    sms:
+      twilio:
+        account-sid: ${TWILIO_ACCOUNT_SID}
+        auth-token: ${TWILIO_AUTH_TOKEN}
+```
+
+**3. Inject `Notifier` and send:**
+
+```java
+@Service
+class OrderService {
+
+    private final Notifier notifier;
+
+    OrderService(Notifier notifier) {
+        this.notifier = notifier;
+    }
+
+    void onShipped(Order order) {
+        String messageId = notifier.notify(SmsRequest.builder()
+                .to(order.phone())
+                .from("+421900999888")
+                .message("Your order has shipped")
+                .build());
+    }
+}
+```
+
+`notify(...)` returns the provider message id, or throws `NotificationDeliveryException`
+(carrying the failed request) if delivery fails.
+
+---
+
+## Channels & providers
+
+Each **channel** defines a request type and an SPI; each **provider** is a starter that
+implements the SPI for one backend.
+
+| Channel | Request | Provider starter | Config prefix |
+|---------|---------|------------------|---------------|
+| SMS   | `SmsRequest`   | `notify-spring-boot-starter-sms-twilio`   | `spring.notify.sms.twilio`   |
+| Push  | `PushRequest`  | `notify-spring-boot-starter-push-fcm`     | `spring.notify.push.fcm`     |
+| Email | `EmailRequest` | `notify-spring-boot-starter-email-smtp`   | `spring.notify.email.smtp`   |
+| Chat  | `ChatRequest`  | `notify-spring-boot-starter-chat-slack`   | `spring.notify.chat.slack`   |
+
+Add as many as you need — they compose. `notifier.notify(...)` routes each request to the
+matching channel by its type.
+
+### SMS — Twilio
+
+```yaml
+spring:
+  notify:
+    sms:
+      twilio:
+        account-sid: ${TWILIO_ACCOUNT_SID}
+        auth-token: ${TWILIO_AUTH_TOKEN}
+```
+
+```java
+notifier.notify(SmsRequest.builder()
+        .to("+421900123456")
+        .from("+421900999888")
+        .message("Hello from spring-notify")
+        .build());
+```
+
+### Push — Firebase Cloud Messaging
+
+```yaml
+spring:
+  notify:
+    push:
+      fcm:
+        service-account: ${FCM_SERVICE_ACCOUNT_JSON}   # the service-account JSON, inline
+```
+
+```java
+notifier.notify(PushRequest.builder()
+        .to(deviceToken)
+        .title("Order shipped")
+        .body("Your order is on its way")
+        .attribute("orderId", "12345")   // becomes FCM data
+        .build());
+```
+
+### Email — SMTP
+
+```yaml
+spring:
+  notify:
+    email:
+      smtp:
+        host: smtp.example.com
+        port: 587
+        username: ${SMTP_USERNAME}
+        password: ${SMTP_PASSWORD}
+```
+
+```java
+notifier.notify(EmailRequest.builder()
+        .to("customer@example.com")
+        .from("shop@example.com")
+        .subject("Your order shipped")
+        .body("Good news — your order is on its way!")
+        .build());
+```
+
+### Chat — Slack
+
+```yaml
+spring:
+  notify:
+    chat:
+      slack:
+        token: ${SLACK_BOT_TOKEN}   # xoxb-…
+```
+
+```java
+notifier.notify(ChatRequest.builder()
+        .to("#alerts")
+        .message("Deploy finished :rocket:")
+        .build());
+```
+
+---
+
+## Provider-specific options
+
+The request types carry only *portable* fields. Anything provider-specific rides in
+`attributes`, which the sender reads by key:
+
+```java
+notifier.notify(PushRequest.builder()
+        .to(deviceToken)
+        .title("Sale")
+        .body("50% off today")
+        .attribute("badge", 1)
+        .attribute("sound", "default")
+        .build());
+```
+
+This keeps the common API clean while leaving an escape hatch for the full power of each SDK.
+
+---
+
+## Customizing in your app
+
+Everything below is done from your own application — just declare beans.
+
+### Use your own provider
+
+Not using one of the bundled providers? Depend on the **channel** module instead of a
+provider starter, and supply your own sender bean. The generic adapter picks it up:
+
+```xml
+<!-- the SMS channel, without a bundled provider -->
+<dependency>
+    <groupId>sk.solodev</groupId>
+    <artifactId>notify-spring-boot-sms</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+</dependency>
+```
+
+```java
+@Component
+class MyGatewaySmsSender implements SmsSender {   // SmsSender extends NotificationSender<SmsRequest>
+    public String send(SmsRequest request) throws Exception {
+        return myGateway.send(request.to(), request.from(), request.message()); // return the provider id
+    }
+}
+```
+
+That's it — `notifier.notify(SmsRequest…)` now routes to your sender. The same pattern
+works for `PushSender`, `EmailSender`, and `ChatSender`.
+
+> Install **one provider per channel**. Two senders for the same channel is a configuration
+> error, reported at send time.
+
+### Override a bundled provider
+
+Every auto-configured bean backs off if you define your own. Want to customize the Twilio
+`SmsSender`, or swap the SMTP `JavaMailSender`? Just declare a bean of that type and yours wins.
+
+### Add cross-cutting behavior
+
+Register a `NotificationInterceptor` bean to wrap **every** send — metrics, structured logging,
+rate limiting, a feature-flag kill-switch. Order multiple with `@Order`:
+
+```java
+@Component
+class LoggingInterceptor implements NotificationInterceptor {
+    public String intercept(NotificationRequest request, Chain chain) {
+        long start = System.nanoTime();
+        String id = chain.proceed(request);          // or return early to short-circuit
+        log.info("sent {} in {}ms", request.getClass().getSimpleName(), (System.nanoTime() - start) / 1_000_000);
+        return id;
+    }
+}
+```
+
+To scope an interceptor to a single channel, extend `ChannelInterceptor<T>` — it runs only
+for that request type and passes everything else straight through:
+
+```java
+@Component
+class SmsRateLimiter extends ChannelInterceptor<SmsRequest> {
+    SmsRateLimiter() { super(SmsRequest.class); }
+    protected String interceptForChannel(SmsRequest request, Chain chain) {
+        // runs only for SMS
+        return chain.proceed(request);
+    }
+}
+```
+
+---
+
+## How it fits together
+
+```
+your code → Notifier.notify(request)
+              → NotificationInterceptor chain      (ordered, optional)
+              → AdapterResolver                    (picks the adapter by request type)
+              → ChannelAdapter.deliver(request)    (wraps failures, returns message id)
+                  → NotificationSender.send(request)   (the provider call: Twilio/FCM/SMTP/Slack)
+```
+
+- **`notify-core`** — the pipeline and contracts (`Notifier`, `NotificationRequest`,
+  `ChannelAdapter`, `NotificationSender`, interceptors). No provider dependencies.
+- **`notify-spring-boot-<channel>`** — a channel: its request type, `*Sender` SPI, and a generic adapter.
+- **`notify-spring-boot-starter-<channel>-<provider>`** — one provider implementation you install.
+
+You depend on a provider starter; everything below it comes transitively.
+
+---
+
+## Error handling
+
+- **`NotificationDeliveryException`** (unchecked) — the provider failed to deliver. Carries
+  `request()` (the request that failed) and the underlying cause. Catch it to retry, log, or fall back.
+- **`IllegalStateException`** — a wiring problem (no provider installed for the request type, or
+  more than one). This is a configuration bug to fix, not a runtime condition to handle.
+
+---
+
+## Requirements
+
+- Java 25
+- Spring Boot 4.1+
+
+## What's next
+
+- More providers per channel — SMS (Vonage, AWS SNS), push (APNs), email (SendGrid, SES), chat (Discord).
+- Publishing to Maven Central.
+- Built-in observability (Micrometer) and retry support around delivery.
+
+Contributions and provider requests welcome.
+
+## License
+
+Apache License 2.0 — see [LICENSE](LICENSE).
