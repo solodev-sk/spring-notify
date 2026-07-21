@@ -107,6 +107,7 @@ implements the SPI for one backend.
 | Channel | Request | Provider starter | Config prefix |
 |---------|---------|------------------|---------------|
 | SMS   | `SmsRequest`   | `notify-spring-boot-starter-sms-twilio`   | `spring.notify.sms.twilio`   |
+| SMS   | `SmsRequest`   | `notify-spring-boot-starter-sms-vonage`   | `spring.notify.sms.vonage`   |
 | Push  | `PushRequest`  | `notify-spring-boot-starter-push-fcm`     | `spring.notify.push.fcm`     |
 | Push  | `PushRequest`  | `notify-spring-boot-starter-push-apns`    | `spring.notify.push.apns`    |
 | Email | `EmailRequest` | `notify-spring-boot-starter-email-smtp`     | `spring.notify.email.smtp`     |
@@ -116,11 +117,16 @@ implements the SPI for one backend.
 Add as many as you need — they compose. `notifier.notify(...)` routes each request to the
 matching channel by its type.
 
-**Providers are interchangeable.** Push has two (Firebase for Android/web, APNs for iOS) and
-email has two (SMTP, SendGrid): you send the same `PushRequest` or `EmailRequest` and pick the
-backend with a dependency, not a code change. Your app code never mentions FCM, APNs, or SendGrid.
+**Providers are interchangeable.** Every channel with more than one provider — SMS (Twilio,
+Vonage), push (Firebase for Android/web, APNs for iOS), email (SMTP, SendGrid) — takes the same
+request; you pick the backend with a dependency, not a code change. Your app code never mentions
+Twilio, Vonage, FCM, APNs, or SendGrid.
 
-### SMS — Twilio
+### SMS — Twilio or Vonage
+
+The same `SmsRequest` works with either provider. Add the starter for the backend you use.
+
+**Twilio** — `notify-spring-boot-starter-sms-twilio`:
 
 ```yaml
 spring:
@@ -129,6 +135,17 @@ spring:
       twilio:
         account-sid: ${TWILIO_ACCOUNT_SID}
         auth-token: ${TWILIO_AUTH_TOKEN}
+```
+
+**Vonage** — `notify-spring-boot-starter-sms-vonage`:
+
+```yaml
+spring:
+  notify:
+    sms:
+      vonage:
+        api-key: ${VONAGE_API_KEY}
+        api-secret: ${VONAGE_API_SECRET}
 ```
 
 ```java
@@ -390,7 +407,7 @@ You depend on a provider starter; everything below it comes transitively.
 
 ## What's next
 
-- More providers per channel — SMS (Vonage, AWS SNS), email (SES), chat (Discord).
+- More providers per channel — SMS (AWS SNS), email (SES), chat (Discord).
 - Publishing to Maven Central.
 
 Contributions and provider requests welcome.

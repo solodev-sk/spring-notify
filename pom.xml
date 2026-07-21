@@ -25,6 +25,7 @@
         <slack-api-client.version>1.45.3</slack-api-client.version>
         <pushy.version>0.15.4</pushy.version>
         <sendgrid.version>4.10.3</sendgrid.version>
+        <vonage.version>8.11.0</vonage.version>
     </properties>
 
     <modules>
@@ -35,6 +36,7 @@
         <module>notify-spring-boot-chat</module>
         <module>notify-spring-boot-autoconfigure</module>
         <module>notify-spring-boot-starter-sms-twilio</module>
+        <module>notify-spring-boot-starter-sms-vonage</module>
         <module>notify-spring-boot-starter-push-fcm</module>
         <module>notify-spring-boot-starter-push-apns</module>
         <module>notify-spring-boot-starter-email-smtp</module>
@@ -113,6 +115,11 @@
                 <groupId>com.sendgrid</groupId>
                 <artifactId>sendgrid-java</artifactId>
                 <version>${sendgrid.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.vonage</groupId>
+                <artifactId>server-sdk</artifactId>
+                <version>${vonage.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
