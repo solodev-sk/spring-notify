@@ -32,7 +32,9 @@ class EmailRequestTest {
                 .cc("c@b.com").bcc("bcc@b.com")
                 .from(new EmailAddress("Shop", "shop@x.com")).replyTo("reply@x.com")
                 .subject("s").body("text").htmlBody("<p>html</p>")
-                .attachment("invoice.pdf", new byte[]{1, 2, 3}, "application/pdf")
+                .attachment(Attachment.builder()
+                        .filename("invoice.pdf").content(new byte[]{1, 2, 3}).contentType("application/pdf")
+                        .build())
                 .header("X-Campaign", "spring")
                 .attribute("priority", "high")
                 .build();
@@ -52,7 +54,7 @@ class EmailRequestTest {
     @Test
     void buildRejectsMissingFrom() {
         assertThat(catchThrowable(() -> EmailRequest.builder().to("a@b.com").subject("s").body("b").build()))
-                .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

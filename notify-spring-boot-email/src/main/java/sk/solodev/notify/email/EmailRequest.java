@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Canonical email request covering the standard RFC 5322 fields: multiple {@code to}/{@code cc}/
@@ -28,6 +27,10 @@ public record EmailRequest(List<EmailAddress> to, List<EmailAddress> cc, List<Em
                            Map<String, Object> attributes) implements NotificationRequest {
 
     public EmailRequest {
+        Assert.notEmpty(to, "at least one 'to' recipient must be set");
+        Assert.notNull(from, "from must be set");
+        Assert.hasText(subject, "subject must be set");
+        Assert.hasText(body, "body must be set");
         to = List.copyOf(to);
         cc = List.copyOf(cc);
         bcc = List.copyOf(bcc);
@@ -138,11 +141,6 @@ public record EmailRequest(List<EmailAddress> to, List<EmailAddress> cc, List<Em
             return this;
         }
 
-        public Builder attachment(String filename, byte[] content, String contentType) {
-            this.attachments.add(new Attachment(filename, content, contentType));
-            return this;
-        }
-
         public Builder header(String name, String value) {
             this.headers.put(name, value);
             return this;
@@ -154,12 +152,7 @@ public record EmailRequest(List<EmailAddress> to, List<EmailAddress> cc, List<Em
         }
 
         public EmailRequest build() {
-            Assert.notEmpty(to, "at least one 'to' recipient must be set");
-            Assert.hasText(subject, "subject must be set");
-            Assert.hasText(body, "body must be set");
-            return new EmailRequest(to, cc, bcc,
-                    Objects.requireNonNull(from, "from must be set"),
-                    replyTo, subject, body,
+            return new EmailRequest(to, cc, bcc, from, replyTo, subject, body,
                     htmlBody, attachments, headers, attributes);
         }
     }

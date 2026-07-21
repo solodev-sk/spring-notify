@@ -5,6 +5,7 @@ import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import sk.solodev.notify.email.Attachment;
 import sk.solodev.notify.email.EmailAddress;
 import sk.solodev.notify.email.EmailRequest;
 
@@ -30,7 +31,9 @@ class SmtpEmailSenderTest {
                 .cc("cc@b.com").bcc("bcc@b.com")
                 .from("no-reply@x.com").replyTo("reply@x.com")
                 .subject("Shipped").body("text").htmlBody("<p>html</p>")
-                .attachment("invoice.pdf", new byte[]{1, 2, 3}, "application/pdf")
+                .attachment(Attachment.builder()
+                        .filename("invoice.pdf").content(new byte[]{1, 2, 3}).contentType("application/pdf")
+                        .build())
                 .header("X-Campaign", "spring")
                 .build());
 

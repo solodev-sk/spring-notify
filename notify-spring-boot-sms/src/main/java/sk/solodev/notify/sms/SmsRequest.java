@@ -11,7 +11,7 @@ import java.util.Map;
  * Canonical SMS request. {@code from} is the sender and is supplied by the consumer
  * (there is no channel-level default). Provider-specific options (media URLs,
  * messaging-service SID, …) travel in {@code attributes}. Nullness is a compile-time
- * contract (jspecify); {@code build()} additionally rejects blank {@code to}, {@code from},
+ * contract (jspecify); the constructor additionally rejects blank {@code to}, {@code from},
  * and {@code message}.
  *
  * @author Dominik Kovács
@@ -21,6 +21,9 @@ public record SmsRequest(String to, String from, String message,
                          Map<String, Object> attributes) implements NotificationRequest {
 
     public SmsRequest {
+        Assert.hasText(to, "to must be set");
+        Assert.hasText(from, "from must be set");
+        Assert.hasText(message, "message must be set");
         attributes = Map.copyOf(attributes);
     }
 
@@ -62,9 +65,6 @@ public record SmsRequest(String to, String from, String message,
         }
 
         public SmsRequest build() {
-            Assert.hasText(to, "to must be set");
-            Assert.hasText(from, "from must be set");
-            Assert.hasText(message, "message must be set");
             return new SmsRequest(to, from, message, attributes);
         }
     }

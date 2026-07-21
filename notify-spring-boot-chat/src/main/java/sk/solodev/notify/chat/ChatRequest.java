@@ -10,7 +10,7 @@ import java.util.Map;
  * Canonical chat request. {@code to} is a provider-interpreted destination (a Slack
  * channel id like {@code "#alerts"}, a Discord channel id, …); {@code message} is the
  * text. Provider-specific rich content (Slack blocks, Discord embeds, …) travels in
- * {@code attributes}. Nullness is a compile-time contract (jspecify); {@code build()}
+ * {@code attributes}. Nullness is a compile-time contract (jspecify); the constructor
  * additionally rejects blank {@code to} and {@code message}.
  *
  * @author Dominik Kovács
@@ -20,6 +20,8 @@ public record ChatRequest(String to, String message,
                           Map<String, Object> attributes) implements NotificationRequest {
 
     public ChatRequest {
+        Assert.hasText(to, "to must be set");
+        Assert.hasText(message, "message must be set");
         attributes = Map.copyOf(attributes);
     }
 
@@ -55,8 +57,6 @@ public record ChatRequest(String to, String message,
         }
 
         public ChatRequest build() {
-            Assert.hasText(to, "to must be set");
-            Assert.hasText(message, "message must be set");
             return new ChatRequest(to, message, attributes);
         }
     }

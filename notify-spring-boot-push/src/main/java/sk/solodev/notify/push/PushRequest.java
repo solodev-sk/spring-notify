@@ -10,7 +10,7 @@ import java.util.Map;
  * Canonical push request. {@code to} is the device token; {@code title}/{@code body}
  * are the notification content. Provider-specific options (data payload, sound, badge,
  * topic, …) travel in {@code attributes}. Nullness is a compile-time contract (jspecify);
- * {@code build()} additionally rejects blank {@code to}, {@code title}, and {@code body}.
+ * the constructor additionally rejects blank {@code to}, {@code title}, and {@code body}.
  *
  * @author Dominik Kovács
  * @since 1.0.0
@@ -19,6 +19,9 @@ public record PushRequest(String to, String title, String body,
                           Map<String, Object> attributes) implements NotificationRequest {
 
     public PushRequest {
+        Assert.hasText(to, "to must be set");
+        Assert.hasText(title, "title must be set");
+        Assert.hasText(body, "body must be set");
         attributes = Map.copyOf(attributes);
     }
 
@@ -60,9 +63,6 @@ public record PushRequest(String to, String title, String body,
         }
 
         public PushRequest build() {
-            Assert.hasText(to, "to must be set");
-            Assert.hasText(title, "title must be set");
-            Assert.hasText(body, "body must be set");
             return new PushRequest(to, title, body, attributes);
         }
     }
