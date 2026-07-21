@@ -108,11 +108,16 @@ implements the SPI for one backend.
 |---------|---------|------------------|---------------|
 | SMS   | `SmsRequest`   | `notify-spring-boot-starter-sms-twilio`   | `spring.notify.sms.twilio`   |
 | Push  | `PushRequest`  | `notify-spring-boot-starter-push-fcm`     | `spring.notify.push.fcm`     |
+| Push  | `PushRequest`  | `notify-spring-boot-starter-push-apns`    | `spring.notify.push.apns`    |
 | Email | `EmailRequest` | `notify-spring-boot-starter-email-smtp`   | `spring.notify.email.smtp`   |
 | Chat  | `ChatRequest`  | `notify-spring-boot-starter-chat-slack`   | `spring.notify.chat.slack`   |
 
 Add as many as you need — they compose. `notifier.notify(...)` routes each request to the
 matching channel by its type.
+
+**Providers are interchangeable.** Push, for example, has two: send the same `PushRequest`
+whether you're on Firebase (Android/web) or APNs (iOS) — you pick the backend with a dependency,
+not a code change. Your app code never mentions FCM or APNs.
 
 ### SMS — Twilio
 
@@ -133,7 +138,11 @@ notifier.notify(SmsRequest.builder()
         .build());
 ```
 
-### Push — Firebase Cloud Messaging
+### Push — Firebase Cloud Messaging (Android/web) or APNs (iOS)
+
+The same `PushRequest` works with either provider. Add the starter for the backend you target.
+
+**Firebase Cloud Messaging** — `notify-spring-boot-starter-push-fcm`:
 
 ```yaml
 spring:
@@ -143,12 +152,28 @@ spring:
         service-account: ${FCM_SERVICE_ACCOUNT_JSON}   # the service-account JSON, inline
 ```
 
+**APNs** (Apple Push Notification service, token auth) — `notify-spring-boot-starter-push-apns`:
+
+```yaml
+spring:
+  notify:
+    push:
+      apns:
+        signing-key: ${APNS_SIGNING_KEY}   # the .p8 key contents
+        key-id: ${APNS_KEY_ID}
+        team-id: ${APNS_TEAM_ID}
+        topic: com.example.app             # your app's bundle id
+        production: true                   # false = sandbox
+```
+
+Sending is identical regardless of provider:
+
 ```java
 notifier.notify(PushRequest.builder()
         .to(deviceToken)
         .title("Order shipped")
         .body("Your order is on its way")
-        .attribute("orderId", "12345")   // becomes FCM data
+        .attribute("orderId", "12345")   // FCM data / APNs custom payload
         .build());
 ```
 
@@ -350,7 +375,7 @@ You depend on a provider starter; everything below it comes transitively.
 
 ## What's next
 
-- More providers per channel — SMS (Vonage, AWS SNS), push (APNs), email (SendGrid, SES), chat (Discord).
+- More providers per channel — SMS (Vonage, AWS SNS), email (SendGrid, SES), chat (Discord).
 - Publishing to Maven Central.
 
 Contributions and provider requests welcome.
