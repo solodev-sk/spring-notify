@@ -7,6 +7,9 @@ import sk.solodev.notify.NotificationRequest;
  * requests of type {@code T} and transparently passes any other request down the chain.
  * Subclass and implement {@link #interceptForChannel} to intercept a single channel
  * without a per-implementation {@code instanceof} guard.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 public abstract class ChannelInterceptor<T extends NotificationRequest> implements NotificationInterceptor {
 

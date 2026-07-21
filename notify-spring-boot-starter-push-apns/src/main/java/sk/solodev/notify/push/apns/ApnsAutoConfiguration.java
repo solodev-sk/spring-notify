@@ -18,6 +18,9 @@ import java.nio.charset.StandardCharsets;
  * Registers an APNs-backed {@link PushSender} when {@code spring.notify.push.apns.signing-key} is
  * set. Uses token (.p8) authentication. Runs before {@link PushAutoConfiguration} so the sender
  * bean exists when that config's {@code @ConditionalOnBean(PushSender.class)} adapter is evaluated.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 @AutoConfiguration(before = PushAutoConfiguration.class)
 @EnableConfigurationProperties(ApnsProperties.class)

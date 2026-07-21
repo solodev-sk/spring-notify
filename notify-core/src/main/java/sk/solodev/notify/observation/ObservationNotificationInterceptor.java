@@ -17,6 +17,9 @@ import sk.solodev.notify.interceptor.NotificationInterceptor;
  * spring.notify.send} reflects provider latency rather than the caller's total wait (which the
  * enclosing request or scheduled-task span already captures). Under a retry interceptor each
  * attempt is its own span; a short-circuit that never reaches the provider records nothing.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 public class ObservationNotificationInterceptor implements NotificationInterceptor, Ordered {
 

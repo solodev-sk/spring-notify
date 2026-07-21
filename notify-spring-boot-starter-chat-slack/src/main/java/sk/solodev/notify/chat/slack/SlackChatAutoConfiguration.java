@@ -13,6 +13,9 @@ import sk.solodev.notify.chat.ChatSender;
  * Registers a Slack-backed {@link ChatSender} when {@code spring.notify.chat.slack.token}
  * is set. Runs before {@link ChatAutoConfiguration} so the sender bean exists when that
  * config's {@code @ConditionalOnBean(ChatSender.class)} adapter is evaluated.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 @AutoConfiguration(before = ChatAutoConfiguration.class)
 @EnableConfigurationProperties(SlackProperties.class)

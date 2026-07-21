@@ -6,6 +6,9 @@ import io.micrometer.observation.docs.ObservationDocumentation;
 /**
  * Documents the {@code spring.notify.send} observation: its default name and the
  * low-cardinality keys it records. Used to generate metric/span reference docs.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 public enum NotificationObservationDocumentation implements ObservationDocumentation {
 

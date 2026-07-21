@@ -8,6 +8,9 @@ import static sk.solodev.notify.observation.NotificationObservationDocumentation
  * Default {@link NotificationObservationConvention}: names the observation
  * {@code spring.notify.send} and tags it with the channel. Only low-cardinality values
  * are recorded — recipient, message id, and body are deliberately never tagged.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 public class DefaultNotificationObservationConvention implements NotificationObservationConvention {
 

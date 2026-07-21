@@ -15,6 +15,9 @@ import org.springframework.context.annotation.Bean;
  * {@code spring.notify.sms.vonage.api-key} is set. Runs before
  * {@link SmsAutoConfiguration} so the sender bean exists when that config's
  * {@code @ConditionalOnBean(SmsSender.class)} adapter is evaluated.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 @AutoConfiguration(before = SmsAutoConfiguration.class)
 @EnableConfigurationProperties(VonageSmsProperties.class)

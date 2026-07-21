@@ -8,7 +8,12 @@ import com.vonage.client.sms.messages.TextMessage;
 import sk.solodev.notify.sms.SmsRequest;
 import sk.solodev.notify.sms.SmsSender;
 
-/** {@link SmsSender} backed by the Vonage SDK. */
+/**
+ * {@link SmsSender} backed by the Vonage SDK.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
+ */
 public class VonageSmsSender implements SmsSender {
 
     private final SmsClient smsClient;

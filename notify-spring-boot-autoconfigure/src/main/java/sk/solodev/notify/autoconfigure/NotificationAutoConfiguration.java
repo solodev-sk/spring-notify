@@ -21,6 +21,9 @@ import java.util.concurrent.ForkJoinPool;
  * Auto-configures the notification pipeline: a {@link DefaultAdapterResolver} and a
  * {@link DefaultNotifier} wired with all {@link ChannelAdapter} and
  * {@link NotificationInterceptor} beans. Both back off if the application defines its own.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 @AutoConfiguration
 public class NotificationAutoConfiguration {

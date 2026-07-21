@@ -10,6 +10,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @param port     the SMTP server port (defaults to 587 when unset)
  * @param username the SMTP username, if the server requires authentication
  * @param password the SMTP password, if the server requires authentication
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 @ConfigurationProperties("spring.notify.email.smtp")
 public record SmtpProperties(String host, int port,

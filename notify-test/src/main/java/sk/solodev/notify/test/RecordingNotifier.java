@@ -29,6 +29,9 @@ import java.util.function.Function;
  * failure handling, arm it with {@link #failWith}.
  *
  * <p>Not thread-safe; intended for single-threaded test use.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 public class RecordingNotifier implements Notifier {
 

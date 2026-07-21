@@ -19,6 +19,9 @@ import java.util.Base64;
  * {@link EmailSender} backed by the SendGrid v3 API. Maps the request onto a SendGrid {@code Mail}
  * (recipients, reply-to, plain + optional HTML content, base64 attachments, custom headers) and
  * returns the {@code X-Message-Id} of the accepted send.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 public class SendGridEmailSender implements EmailSender {
 

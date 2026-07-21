@@ -4,7 +4,12 @@ import sk.solodev.notify.NotificationRequest;
 
 import java.util.List;
 
-/** Picks the single adapter whose {@code supports} returns true. */
+/**
+ * Picks the single adapter whose {@code supports} returns true.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
+ */
 public class DefaultAdapterResolver implements AdapterResolver {
 
     @Override

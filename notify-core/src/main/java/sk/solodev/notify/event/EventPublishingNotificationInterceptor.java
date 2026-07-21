@@ -17,6 +17,9 @@ import sk.solodev.notify.interceptor.NotificationInterceptor;
  * therefore publishes no event, a user retry wrapper sees one {@link NotificationFailed} per real
  * attempt, and the failure carried is the {@link NotificationDeliveryException} the adapter throws.
  * Sitting just outside the observation means the delivery span excludes {@code @EventListener} time.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 public class EventPublishingNotificationInterceptor implements NotificationInterceptor, Ordered {
 

@@ -15,6 +15,9 @@ import sk.solodev.notify.observation.ObservationNotificationInterceptor;
  * {@code spring-boot-starter-actuator}, among others). Adds one observation per send — a timer, a
  * tracing span, and structured logs. Without a registry bean, nothing is registered and sends are
  * unobserved.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 @AutoConfiguration
 @ConditionalOnBean(ObservationRegistry.class)

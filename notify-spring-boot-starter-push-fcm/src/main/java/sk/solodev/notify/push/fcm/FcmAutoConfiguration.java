@@ -23,6 +23,9 @@ import java.nio.charset.StandardCharsets;
  * {@code spring.notify.push.fcm.service-account} is set. Runs before
  * {@link PushAutoConfiguration} so the sender bean exists when that config's
  * {@code @ConditionalOnBean(PushSender.class)} adapter is evaluated.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 @AutoConfiguration(before = PushAutoConfiguration.class)
 @EnableConfigurationProperties(FcmProperties.class)

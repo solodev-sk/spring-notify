@@ -12,6 +12,9 @@ import sk.solodev.notify.push.PushSender;
 /**
  * {@link PushSender} backed by the Apple Push Notification service (Pushy, token auth). Builds an
  * {@code aps} alert payload from the request, sends to the configured topic, and returns the APNs id.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 public class ApnsPushSender implements PushSender {
 

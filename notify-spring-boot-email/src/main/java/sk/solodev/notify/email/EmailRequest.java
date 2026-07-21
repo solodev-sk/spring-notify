@@ -17,6 +17,9 @@ import java.util.Objects;
  * and custom {@code headers}. Anything still provider-specific travels in {@code attributes}.
  * Nullness is a compile-time contract (jspecify); collections are defensively copied. {@code build()}
  * requires at least one {@code to} recipient and rejects blank {@code subject} and {@code body}.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 public record EmailRequest(List<EmailAddress> to, List<EmailAddress> cc, List<EmailAddress> bcc,
                            EmailAddress from, @Nullable EmailAddress replyTo,

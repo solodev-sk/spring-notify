@@ -13,6 +13,9 @@ import sk.solodev.notify.email.EmailSender;
  * Registers a SendGrid-backed {@link EmailSender} when {@code spring.notify.email.sendgrid.api-key}
  * is set. Runs before {@link EmailAutoConfiguration} so the sender bean exists when that config's
  * {@code @ConditionalOnBean(EmailSender.class)} adapter is evaluated.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 @AutoConfiguration(before = EmailAutoConfiguration.class)
 @EnableConfigurationProperties(SendGridProperties.class)

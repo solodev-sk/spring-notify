@@ -2,7 +2,12 @@ package sk.solodev.notify.email;
 
 import java.util.Objects;
 
-/** An email attachment: a file name, its raw bytes, and the MIME content type. */
+/**
+ * An email attachment: a file name, its raw bytes, and the MIME content type.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
+ */
 public record Attachment(String filename, byte[] content, String contentType) {
 
     public Attachment {

@@ -2,6 +2,9 @@
  * Email channel: the canonical EmailRequest, the EmailSender SPI, and its auto-configuration.
  *
  * <p>All types in this package are non-null by default ({@link org.jspecify.annotations.NullMarked}).
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 @NullMarked
 package sk.solodev.notify.email;

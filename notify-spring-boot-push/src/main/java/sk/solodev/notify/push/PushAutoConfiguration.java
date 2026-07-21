@@ -7,7 +7,12 @@ import org.springframework.context.annotation.Bean;
 import sk.solodev.notify.dispatch.ChannelAdapter;
 import sk.solodev.notify.dispatch.SenderChannelAdapter;
 
-/** Registers the push channel adapter when a provider {@link PushSender} bean is present. */
+/**
+ * Registers the push channel adapter when a provider {@link PushSender} bean is present.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
+ */
 @AutoConfiguration
 public class PushAutoConfiguration {
 

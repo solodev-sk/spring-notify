@@ -11,6 +11,9 @@ import java.util.Map;
  * are the notification content. Provider-specific options (data payload, sound, badge,
  * topic, …) travel in {@code attributes}. Nullness is a compile-time contract (jspecify);
  * {@code build()} additionally rejects blank {@code to}, {@code title}, and {@code body}.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 public record PushRequest(String to, String title, String body,
                           Map<String, Object> attributes) implements NotificationRequest {

@@ -6,6 +6,9 @@ package sk.solodev.notify;
  * lives in the SMS channel module, a {@code ChatRequest} in the chat module) — that is
  * what the resolver routes on. Each request type carries its own portable fields plus,
  * where useful, an {@code attributes} map for provider-specific extras.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 public interface NotificationRequest {
 

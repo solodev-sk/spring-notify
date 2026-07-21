@@ -12,6 +12,9 @@ import java.io.IOException;
  * channel given by {@code request.to()} and returns the message timestamp ({@code ts}).
  * Provider failures propagate (checked SDK exceptions or a runtime error for a non-ok
  * response); the {@code ChatChannelAdapter} converts them to {@code NotificationDeliveryException}.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 public class SlackChatSender implements ChatSender {
 

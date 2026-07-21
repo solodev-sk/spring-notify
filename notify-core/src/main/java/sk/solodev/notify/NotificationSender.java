@@ -11,6 +11,9 @@ import sk.solodev.notify.dispatch.SenderChannelAdapter;
  * into a {@link ChannelAdapter}.
  *
  * @param <T> the channel request type this sender delivers
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 @FunctionalInterface
 public interface NotificationSender<T extends NotificationRequest> {

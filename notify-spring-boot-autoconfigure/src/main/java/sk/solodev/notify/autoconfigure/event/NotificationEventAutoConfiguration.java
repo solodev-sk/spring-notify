@@ -11,6 +11,9 @@ import sk.solodev.notify.event.EventPublishingNotificationInterceptor;
  * Registers the interceptor that publishes {@code NotificationSent} / {@code NotificationFailed}
  * application events per send. Enabled by default; set {@code spring.notify.events.enabled=false}
  * to turn it off.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 @AutoConfiguration
 @ConditionalOnProperty(prefix = "spring.notify.events", name = "enabled", matchIfMissing = true)

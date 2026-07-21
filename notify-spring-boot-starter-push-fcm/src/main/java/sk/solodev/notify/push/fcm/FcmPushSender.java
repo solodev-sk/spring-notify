@@ -7,7 +7,12 @@ import com.google.firebase.messaging.Notification;
 import sk.solodev.notify.push.PushRequest;
 import sk.solodev.notify.push.PushSender;
 
-/** {@link PushSender} backed by the Firebase Admin SDK (FCM). */
+/**
+ * {@link PushSender} backed by the Firebase Admin SDK (FCM).
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
+ */
 public class FcmPushSender implements PushSender {
 
     private final FirebaseMessaging messaging;

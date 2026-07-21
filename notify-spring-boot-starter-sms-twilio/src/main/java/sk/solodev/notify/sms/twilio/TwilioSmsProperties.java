@@ -7,6 +7,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * @param accountSid the Twilio account SID
  * @param authToken  the Twilio auth token
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 @ConfigurationProperties("spring.notify.sms.twilio")
 public record TwilioSmsProperties(String accountSid, String authToken) {

@@ -14,6 +14,9 @@ import java.util.concurrent.ForkJoinPool;
 /**
  * Default {@link Notifier}: resolves the adapter for a request via the {@link AdapterResolver}
  * and invokes it through the ordered {@link NotificationInterceptor} chain.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 public class DefaultNotifier implements Notifier {
 

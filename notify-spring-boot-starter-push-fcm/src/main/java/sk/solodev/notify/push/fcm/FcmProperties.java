@@ -7,6 +7,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * @param serviceAccount the service-account credentials JSON (the content itself), used to
  *                       initialise the Firebase Admin SDK
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 @ConfigurationProperties("spring.notify.push.fcm")
 public record FcmProperties(String serviceAccount) {

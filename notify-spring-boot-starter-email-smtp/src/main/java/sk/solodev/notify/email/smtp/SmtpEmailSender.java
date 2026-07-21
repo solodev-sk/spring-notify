@@ -19,6 +19,9 @@ import java.util.UUID;
  * {@link EmailSender} backed by Spring's {@link JavaMailSender} (SMTP). Builds a MIME message
  * covering recipients (to/cc/bcc), reply-to, an optional HTML alternative, attachments, and
  * custom headers. SMTP returns no message id, so a generated UUID is used as the receipt id.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 public class SmtpEmailSender implements EmailSender {
 

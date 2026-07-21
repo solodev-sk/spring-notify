@@ -9,6 +9,9 @@
  * {@link sk.solodev.notify.dispatch.SenderChannelAdapter} adapts a sender into a channel adapter.
  *
  * <p>All types in this package are non-null by default ({@link org.jspecify.annotations.NullMarked}).
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 @NullMarked
 package sk.solodev.notify;

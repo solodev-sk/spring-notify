@@ -6,7 +6,12 @@ import com.twilio.type.PhoneNumber;
 import sk.solodev.notify.sms.SmsRequest;
 import sk.solodev.notify.sms.SmsSender;
 
-/** {@link SmsSender} backed by the Twilio SDK. */
+/**
+ * {@link SmsSender} backed by the Twilio SDK.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
+ */
 public class TwilioSmsSender implements SmsSender {
 
     private final TwilioRestClient restClient;

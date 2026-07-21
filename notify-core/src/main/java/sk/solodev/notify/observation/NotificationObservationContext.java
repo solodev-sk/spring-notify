@@ -6,6 +6,9 @@ import sk.solodev.notify.NotificationRequest;
 /**
  * {@link Observation.Context} for a single notification send. Carries the request and its
  * derived channel name so an {@link NotificationObservationConvention} can build the tags.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 public class NotificationObservationContext extends Observation.Context {
 

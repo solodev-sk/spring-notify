@@ -11,6 +11,9 @@ import java.util.concurrent.CompletableFuture;
  * {@link #notify(NotificationRequest)} with a channel request (an {@code SmsRequest},
  * {@code EmailRequest}, …); the notifier routes it to the matching {@link ChannelAdapter},
  * applying any registered {@link NotificationInterceptor}s around the delivery.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 public interface Notifier {
 

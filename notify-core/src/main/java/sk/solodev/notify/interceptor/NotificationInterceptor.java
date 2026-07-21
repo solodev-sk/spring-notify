@@ -7,6 +7,9 @@ import sk.solodev.notify.NotificationRequest;
  * {@code @Order}/{@code Ordered}). An interceptor may inspect or replace the
  * request, short-circuit by returning a message id without calling the chain, or
  * inspect the resulting id after calling it.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 @FunctionalInterface
 public interface NotificationInterceptor {

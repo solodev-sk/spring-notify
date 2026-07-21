@@ -16,6 +16,9 @@ import sk.solodev.notify.email.EmailSender;
  * so configuration matches the other channels (rather than Spring Boot's {@code spring.mail.*}).
  * Runs before {@link EmailAutoConfiguration} so the sender bean exists when that config's
  * {@code @ConditionalOnBean(EmailSender.class)} adapter is evaluated.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 @AutoConfiguration(before = EmailAutoConfiguration.class)
 @EnableConfigurationProperties(SmtpProperties.class)

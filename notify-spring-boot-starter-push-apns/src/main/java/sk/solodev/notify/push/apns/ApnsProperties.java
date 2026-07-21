@@ -10,6 +10,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @param teamId     the Apple developer team id
  * @param topic      the app bundle id every push targets
  * @param production {@code true} for the production APNs gateway, {@code false} for the sandbox
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 @ConfigurationProperties("spring.notify.push.apns")
 public record ApnsProperties(String signingKey, String keyId, String teamId, String topic, boolean production) {

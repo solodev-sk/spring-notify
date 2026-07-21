@@ -4,7 +4,12 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 
-/** An email address with an optional display name (e.g. {@code "Alice" <alice@example.com>}). */
+/**
+ * An email address with an optional display name (e.g. {@code "Alice" <alice@example.com>}).
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
+ */
 public record EmailAddress(@Nullable String name, String address) {
 
     public EmailAddress {

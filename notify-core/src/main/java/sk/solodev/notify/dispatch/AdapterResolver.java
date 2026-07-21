@@ -4,7 +4,12 @@ import sk.solodev.notify.NotificationRequest;
 
 import java.util.List;
 
-/** Selects which adapter handles a request. Override to customise provider selection. */
+/**
+ * Selects which adapter handles a request. Override to customise provider selection.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
+ */
 public interface AdapterResolver {
 
     /**

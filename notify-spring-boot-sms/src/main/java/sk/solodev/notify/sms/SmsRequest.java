@@ -13,6 +13,9 @@ import java.util.Map;
  * messaging-service SID, …) travel in {@code attributes}. Nullness is a compile-time
  * contract (jspecify); {@code build()} additionally rejects blank {@code to}, {@code from},
  * and {@code message}.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 public record SmsRequest(String to, String from, String message,
                          Map<String, Object> attributes) implements NotificationRequest {

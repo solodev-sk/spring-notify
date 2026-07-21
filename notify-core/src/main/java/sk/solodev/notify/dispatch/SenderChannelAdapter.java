@@ -11,6 +11,9 @@ import sk.solodev.notify.NotificationSender;
  * instead of hand-writing an adapter per channel.
  *
  * @param <T> the channel request type this adapter handles
+ *
+ * @author Dominik Kovács
+ * @since 1.0.0
  */
 public final class SenderChannelAdapter<T extends NotificationRequest> implements ChannelAdapter<T> {
 
