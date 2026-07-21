@@ -1,8 +1,7 @@
 package sk.solodev.notify.email;
 
 import org.jspecify.annotations.Nullable;
-
-import java.util.Objects;
+import org.springframework.util.Assert;
 
 /**
  * An email address with an optional display name (e.g. {@code "Alice" <alice@example.com>}).
@@ -13,7 +12,7 @@ import java.util.Objects;
 public record EmailAddress(@Nullable String name, String address) {
 
     public EmailAddress {
-        Objects.requireNonNull(address, "address must not be null");
+        Assert.hasText(address, "address must be set");
     }
 
     /** An address with no display name. */

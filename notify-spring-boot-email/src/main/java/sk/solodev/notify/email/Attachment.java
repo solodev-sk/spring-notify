@@ -1,8 +1,7 @@
 package sk.solodev.notify.email;
 
 import org.jspecify.annotations.Nullable;
-
-import java.util.Objects;
+import org.springframework.util.Assert;
 
 /**
  * An email attachment: a file name, its raw bytes, and the MIME content type.
@@ -13,9 +12,9 @@ import java.util.Objects;
 public record Attachment(String filename, byte[] content, String contentType) {
 
     public Attachment {
-        Objects.requireNonNull(filename, "filename must not be null");
-        Objects.requireNonNull(content, "content must not be null");
-        Objects.requireNonNull(contentType, "contentType must not be null");
+        Assert.hasText(filename, "filename must be set");
+        Assert.notNull(content, "content must be set");
+        Assert.hasText(contentType, "contentType must be set");
     }
 
     public static Builder builder() {
