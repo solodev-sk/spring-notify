@@ -390,6 +390,31 @@ Micrometer is absent.
 
 Customise the tags or name by declaring your own `NotificationObservationConvention` bean.
 
+## Events
+
+Every send publishes a Spring application event — `NotificationSent` (with the provider message id)
+on success, `NotificationFailed` (with the cause) on failure. Listen with `@EventListener` for
+audit trails, dead-lettering, or your own retry — no interceptor boilerplate:
+
+```java
+@Component
+class DeliveryAudit {
+
+    @EventListener
+    void onSent(NotificationSent event) {
+        log.info("sent {} via {}", event.messageId(), event.request().getClass().getSimpleName());
+    }
+
+    @EventListener
+    void onFailed(NotificationFailed event) {
+        deadLetterStore.save(event.request());   // e.g. queue for a later retry
+    }
+}
+```
+
+Both implement the sealed `NotificationEvent`, so a single listener can `switch` over them. Enabled
+by default; set `spring.notify.events.enabled=false` to turn publication off.
+
 ---
 
 ## How it fits together

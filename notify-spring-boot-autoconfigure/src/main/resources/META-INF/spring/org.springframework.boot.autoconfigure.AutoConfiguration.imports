@@ -1,2 +1,3 @@
 sk.solodev.notify.autoconfigure.NotificationAutoConfiguration
 sk.solodev.notify.autoconfigure.observation.NotificationObservationAutoConfiguration
+sk.solodev.notify.autoconfigure.event.NotificationEventAutoConfiguration
