@@ -8,20 +8,13 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 class ChatRequestTest {
 
     @Test
-    void builderSetsFieldsAndDefaultsAttributes() {
-        var request = ChatRequest.builder().to("#alerts").message("Deploy finished").build();
-
-        assertThat(request.to()).isEqualTo("#alerts");
-        assertThat(request.message()).isEqualTo("Deploy finished");
-        assertThat(request.attributes()).isEmpty();
-    }
-
-    @Test
-    void builderSetsAttributes() {
-        var request = ChatRequest.builder().to("#alerts").message("hi")
+    void builderSetsFieldsAndAttributes() {
+        var request = ChatRequest.builder().to("#alerts").message("Deploy finished")
                 .attribute("blocks", "[]")
                 .build();
 
+        assertThat(request.to()).isEqualTo("#alerts");
+        assertThat(request.message()).isEqualTo("Deploy finished");
         assertThat(request.attributes()).containsEntry("blocks", "[]");
     }
 

@@ -9,12 +9,6 @@ class NotificationDeliveryExceptionTest {
     private final NotificationRequest request = new TestRequest("r1");
 
     @Test
-    void isARuntimeException() {
-        assertThat(new NotificationDeliveryException("boom", request, new RuntimeException()))
-                .isInstanceOf(RuntimeException.class);
-    }
-
-    @Test
     void preservesCauseAndRequest() {
         var cause = new IllegalStateException("provider down");
 

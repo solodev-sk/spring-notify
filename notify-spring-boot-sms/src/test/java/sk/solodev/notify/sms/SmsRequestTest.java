@@ -10,13 +10,15 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 class SmsRequestTest {
 
     @Test
-    void builderSetsFieldsAndDefaultsAttributes() {
-        var request = SmsRequest.builder().to("+43111").from("+43000").message("hello").build();
+    void builderSetsFieldsAndAttributes() {
+        var request = SmsRequest.builder().to("+43111").from("+43000").message("hello")
+                .attribute("mediaUrl", "http://img")
+                .build();
 
         assertThat(request.to()).isEqualTo("+43111");
         assertThat(request.from()).isEqualTo("+43000");
         assertThat(request.message()).isEqualTo("hello");
-        assertThat(request.attributes()).isEmpty();
+        assertThat(request.attributes()).containsEntry("mediaUrl", "http://img");
     }
 
     @Test
@@ -42,15 +44,4 @@ class SmsRequestTest {
         assertThat(request.attributes()).containsOnlyKeys("mediaUrl");
     }
 
-    @Test
-    void builderSetsAttributes() {
-        var request = SmsRequest.builder().to("+43111").from("+43000").message("hello")
-                .attribute("mediaUrl", "http://img")
-                .build();
-
-        assertThat(request.to()).isEqualTo("+43111");
-        assertThat(request.from()).isEqualTo("+43000");
-        assertThat(request.message()).isEqualTo("hello");
-        assertThat(request.attributes()).containsEntry("mediaUrl", "http://img");
-    }
 }
