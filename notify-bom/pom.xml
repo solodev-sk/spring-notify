@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>sk.solodev</groupId>
+        <artifactId>spring-notify-parent</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>notify-bom</artifactId>
+    <packaging>pom</packaging>
+    <name>spring-notify :: bom</name>
+    <description>Bill of materials for spring-notify: import to align all notify-* module versions</description>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>sk.solodev</groupId>
+                <artifactId>notify-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sk.solodev</groupId>
+                <artifactId>notify-spring-boot-sms</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sk.solodev</groupId>
+                <artifactId>notify-spring-boot-push</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sk.solodev</groupId>
+                <artifactId>notify-spring-boot-email</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sk.solodev</groupId>
+                <artifactId>notify-spring-boot-chat</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sk.solodev</groupId>
+                <artifactId>notify-spring-boot-autoconfigure</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sk.solodev</groupId>
+                <artifactId>notify-test</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sk.solodev</groupId>
+                <artifactId>notify-spring-boot-starter-sms-twilio</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sk.solodev</groupId>
+                <artifactId>notify-spring-boot-starter-sms-vonage</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sk.solodev</groupId>
+                <artifactId>notify-spring-boot-starter-push-fcm</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sk.solodev</groupId>
+                <artifactId>notify-spring-boot-starter-push-apns</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sk.solodev</groupId>
+                <artifactId>notify-spring-boot-starter-email-smtp</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sk.solodev</groupId>
+                <artifactId>notify-spring-boot-starter-email-sendgrid</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sk.solodev</groupId>
+                <artifactId>notify-spring-boot-starter-chat-slack</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

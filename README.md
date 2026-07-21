@@ -28,6 +28,34 @@ git clone <repo> && cd spring-notify
 
 Then depend on the starter(s) you need, as shown below.
 
+### Aligning versions with the BOM
+
+Depending on more than one `notify-*` artifact? Import `notify-bom` once and drop the `<version>`
+from each — they'll all resolve to the same release, and `notify-test` stays in lockstep with the
+core it doubles:
+
+```xml
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>sk.solodev</groupId>
+            <artifactId>notify-bom</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+```
+
+```xml
+<!-- version now managed by the BOM -->
+<dependency>
+    <groupId>sk.solodev</groupId>
+    <artifactId>notify-spring-boot-starter-sms-twilio</artifactId>
+</dependency>
+```
+
 ---
 
 ## Why

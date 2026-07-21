@@ -29,6 +29,7 @@
     </properties>
 
     <modules>
+        <module>notify-bom</module>
         <module>notify-core</module>
         <module>notify-spring-boot-sms</module>
         <module>notify-spring-boot-push</module>
