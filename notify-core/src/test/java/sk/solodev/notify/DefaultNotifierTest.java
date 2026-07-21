@@ -99,6 +99,26 @@ class DefaultNotifierTest {
     }
 
     @Test
+    void notifyAsyncSubmitsViaExecutorExecuteSoATaskDecoratorSeesTheSend() throws Exception {
+        // proves the send runs through Executor.execute(...) — the hook Spring/Boot use to wrap
+        // the task with a ContextPropagatingTaskDecorator (tracing, MDC, security) on the worker thread.
+        var decoratedAround = new ArrayList<String>();
+        var pool = Executors.newSingleThreadExecutor();
+        Executor decoratingExecutor = task -> pool.execute(() -> {
+            decoratedAround.add("before");
+            task.run();
+            decoratedAround.add("after");
+        });
+        var svc = new DefaultNotifier(List.of(recordingAdapter(new ArrayList<>())),
+                new DefaultAdapterResolver(), List.of(), decoratingExecutor);
+
+        svc.notifyAsync(request).get();
+        pool.shutdown();
+
+        assertThat(decoratedAround).containsExactly("before", "after");
+    }
+
+    @Test
     void sortsInterceptorsByOrderRegardlessOfConstructionOrder() {
         var calls = new ArrayList<String>();
 

@@ -117,6 +117,11 @@ It runs on Spring Boot's `applicationTaskExecutor`, so setting `spring.threads.v
 makes every async send use a virtual thread — no extra configuration. The future completes
 exceptionally with the same `NotificationDeliveryException` that `notify(...)` would throw.
 
+Because it uses that shared executor, context propagation works the same as Spring's `@Async`:
+set `spring.task.execution.propagate-context=true` and the caller's tracing span, MDC, and
+security context cross onto the worker thread — so an async send stays part of the originating
+trace instead of starting an orphan span.
+
 ---
 
 ## Channels & providers
@@ -420,6 +425,34 @@ class DeliveryAudit {
 
 Both implement the sealed `NotificationEvent`, so a single listener can `switch` over them. Enabled
 by default; set `spring.notify.events.enabled=false` to turn publication off.
+
+## Testing
+
+The `notify-test` module provides `RecordingNotifier` — a `Notifier` double that captures sends
+instead of delivering them, so you can assert what *would* be sent without a real provider:
+
+```xml
+<dependency>
+    <groupId>sk.solodev</groupId>
+    <artifactId>notify-test</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <scope>test</scope>
+</dependency>
+```
+
+```java
+var notifier = new RecordingNotifier();
+var orders = new OrderService(notifier);
+
+orders.onShipped(order);
+
+assertThat(notifier.sent(SmsRequest.class)).hasSize(1);
+assertThat(notifier.lastSent()).contains(expectedRequest);
+```
+
+`notifyAsync` runs synchronously and returns a completed future, so async sends are deterministic
+in tests. Use `returning(...)` to control the message id and `failWith(...)` to exercise your
+error handling.
 
 ---
 
