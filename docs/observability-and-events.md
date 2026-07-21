@@ -71,3 +71,7 @@ From outermost to innermost:
     [ observation ]           (LOWEST_PRECEDENCE, innermost)
       resolve + provider send
 ```
+
+---
+
+Next: [Testing](testing.md) — asserting notifications with `RecordingNotifier`.

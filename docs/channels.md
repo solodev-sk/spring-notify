@@ -85,3 +85,7 @@ ChatRequest.builder()
         .message("Deploy finished :rocket:")
         .build();
 ```
+
+---
+
+Next: [Providers](providers.md) — the provider matrix and per-provider configuration.

@@ -64,3 +64,7 @@ aren't portable ride in an `attributes` map the sender reads by key.
 - **`IllegalStateException`** — a wiring problem (no provider, or more than one, for a request
   type). A configuration bug to fix, not a runtime condition to handle.
 - **`IllegalArgumentException`** — a request built with a missing/blank required field.
+
+---
+
+Next: [Channels](channels.md) — the request types and their fields.

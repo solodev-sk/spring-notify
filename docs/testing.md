@@ -56,3 +56,7 @@ assertThatThrownBy(() -> orders.onShipped(order))
 ```
 
 `RecordingNotifier` is not thread-safe; it is intended for single-threaded test use.
+
+---
+
+Back to the [documentation index](index.md).

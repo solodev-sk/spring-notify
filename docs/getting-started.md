@@ -79,8 +79,8 @@ class OrderService {
 the failed request) on failure. To send off the calling thread, use `notifyAsync(...)` — see
 [Concepts](concepts.md#asynchronous-sending).
 
-## Next steps
+---
 
-- [Concepts](concepts.md) — understand the pipeline.
-- [Providers](providers.md) — configuration for every backend.
-- [Testing](testing.md) — assert sends without a real provider.
+Next: [Concepts](concepts.md) — understand the pipeline. Or jump to
+[Providers](providers.md) for backend configuration, or [Testing](testing.md) to assert sends
+without a real provider.
