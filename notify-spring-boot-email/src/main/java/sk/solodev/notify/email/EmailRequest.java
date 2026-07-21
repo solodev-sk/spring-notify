@@ -158,11 +158,6 @@ public record EmailRequest(List<EmailAddress> to, List<EmailAddress> cc, List<Em
             return this;
         }
 
-        public Builder attachment(Attachment attachment) {
-            this.attachments.add(attachment);
-            return this;
-        }
-
         public Builder attachments(Attachment... attachments) {
             this.attachments.addAll(List.of(attachments));
             return this;

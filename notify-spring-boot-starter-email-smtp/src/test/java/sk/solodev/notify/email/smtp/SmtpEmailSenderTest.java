@@ -31,7 +31,7 @@ class SmtpEmailSenderTest {
                 .cc("cc@b.com").bcc("bcc@b.com")
                 .from("no-reply@x.com").replyTo("reply@x.com")
                 .subject("Shipped").body("text").htmlBody("<p>html</p>")
-                .attachment(Attachment.builder()
+                .attachments(Attachment.builder()
                         .filename("invoice.pdf").content(new byte[]{1, 2, 3}).contentType("application/pdf")
                         .build())
                 .header("X-Campaign", "spring")

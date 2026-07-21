@@ -66,7 +66,9 @@ EmailRequest.builder()
         .subject("Your invoice")
         .body("Plain-text version")
         .htmlBody("<h1>Your invoice</h1><p>Thanks for your order.</p>")
-        .attachment("invoice.pdf", pdfBytes, "application/pdf")
+        .attachments(Attachment.builder()
+                .filename("invoice.pdf").content(pdfBytes).contentType("application/pdf")
+                .build())
         .header("X-Campaign", "invoices")
         .build();
 ```
