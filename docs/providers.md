@@ -120,6 +120,18 @@ class MyGatewaySmsSender implements SmsSender {   // SmsSender extends Notificat
 That's it — `notifier.notify(SmsRequest…)` now routes to your sender. The same pattern works for
 `PushSender`, `EmailSender`, and `ChatSender`.
 
+## Multiple providers for one channel
+
+Not supported yet. The framework routes by request type and wires **one** provider per channel, so
+installing two starters for the same channel (say Twilio *and* Vonage) does not give you a choice
+between them — the provider auto-configurations back off one another, and which one wins is
+undefined. Don't install more than one starter per channel.
+
+First-class multi-provider support (failover, per-region routing) is on the roadmap. Until then, if
+you need it today, the escape hatch is to skip the bundled starters for that channel and register
+your own `SmsSender` that wraps the provider SDKs and picks between them — but note that means
+wiring those SDK clients yourself, without the auto-configuration the starters provide.
+
 ---
 
 Next: [Observability & events](observability-and-events.md) — metrics, tracing, and lifecycle events.

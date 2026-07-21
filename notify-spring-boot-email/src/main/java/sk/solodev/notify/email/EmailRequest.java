@@ -15,8 +15,9 @@ import java.util.Map;
  * {@code bcc} recipients, {@code from}/{@code replyTo}, subject, a plain-text {@code body} and an
  * optional {@code htmlBody} (both present → {@code multipart/alternative}), file {@code attachments},
  * and custom {@code headers}. Anything still provider-specific travels in {@code attributes}.
- * Nullness is a compile-time contract (jspecify); collections are defensively copied. {@code build()}
- * requires at least one {@code to} recipient and rejects blank {@code subject} and {@code body}.
+ * Nullness is a compile-time contract (jspecify); collections are defensively copied. The constructor
+ * requires at least one {@code to} recipient and a {@code from} address, and rejects blank
+ * {@code subject} and {@code body}.
  *
  * @author Dominik Kovács
  * @since 1.0.0
