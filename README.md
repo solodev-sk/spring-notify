@@ -109,15 +109,16 @@ implements the SPI for one backend.
 | SMS   | `SmsRequest`   | `notify-spring-boot-starter-sms-twilio`   | `spring.notify.sms.twilio`   |
 | Push  | `PushRequest`  | `notify-spring-boot-starter-push-fcm`     | `spring.notify.push.fcm`     |
 | Push  | `PushRequest`  | `notify-spring-boot-starter-push-apns`    | `spring.notify.push.apns`    |
-| Email | `EmailRequest` | `notify-spring-boot-starter-email-smtp`   | `spring.notify.email.smtp`   |
+| Email | `EmailRequest` | `notify-spring-boot-starter-email-smtp`     | `spring.notify.email.smtp`     |
+| Email | `EmailRequest` | `notify-spring-boot-starter-email-sendgrid` | `spring.notify.email.sendgrid` |
 | Chat  | `ChatRequest`  | `notify-spring-boot-starter-chat-slack`   | `spring.notify.chat.slack`   |
 
 Add as many as you need — they compose. `notifier.notify(...)` routes each request to the
 matching channel by its type.
 
-**Providers are interchangeable.** Push, for example, has two: send the same `PushRequest`
-whether you're on Firebase (Android/web) or APNs (iOS) — you pick the backend with a dependency,
-not a code change. Your app code never mentions FCM or APNs.
+**Providers are interchangeable.** Push has two (Firebase for Android/web, APNs for iOS) and
+email has two (SMTP, SendGrid): you send the same `PushRequest` or `EmailRequest` and pick the
+backend with a dependency, not a code change. Your app code never mentions FCM, APNs, or SendGrid.
 
 ### SMS — Twilio
 
@@ -177,7 +178,11 @@ notifier.notify(PushRequest.builder()
         .build());
 ```
 
-### Email — SMTP
+### Email — SMTP or SendGrid
+
+The same `EmailRequest` works with either provider. Add the starter for the backend you use.
+
+**SMTP** — `notify-spring-boot-starter-email-smtp`:
 
 ```yaml
 spring:
@@ -188,6 +193,16 @@ spring:
         port: 587
         username: ${SMTP_USERNAME}
         password: ${SMTP_PASSWORD}
+```
+
+**SendGrid** — `notify-spring-boot-starter-email-sendgrid`:
+
+```yaml
+spring:
+  notify:
+    email:
+      sendgrid:
+        api-key: ${SENDGRID_API_KEY}
 ```
 
 ```java
@@ -375,7 +390,7 @@ You depend on a provider starter; everything below it comes transitively.
 
 ## What's next
 
-- More providers per channel — SMS (Vonage, AWS SNS), email (SendGrid, SES), chat (Discord).
+- More providers per channel — SMS (Vonage, AWS SNS), email (SES), chat (Discord).
 - Publishing to Maven Central.
 
 Contributions and provider requests welcome.
