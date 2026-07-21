@@ -22,7 +22,7 @@ public class TwilioSmsSender implements SmsSender {
 
     @Override
     public String send(SmsRequest request) {
-        Message message = Message.creator(
+        var message = Message.creator(
                 new PhoneNumber(request.to()),
                 new PhoneNumber(request.from()),
                 request.message()).create(restClient);

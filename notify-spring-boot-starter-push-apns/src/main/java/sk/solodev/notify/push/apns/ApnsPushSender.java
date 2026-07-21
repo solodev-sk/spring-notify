@@ -2,7 +2,6 @@ package sk.solodev.notify.push.apns;
 
 import com.eatthepath.pushy.apns.ApnsClient;
 import com.eatthepath.pushy.apns.PushNotificationResponse;
-import com.eatthepath.pushy.apns.util.ApnsPayloadBuilder;
 import com.eatthepath.pushy.apns.util.SimpleApnsPayloadBuilder;
 import com.eatthepath.pushy.apns.util.SimpleApnsPushNotification;
 import com.eatthepath.pushy.apns.util.TokenUtil;
@@ -29,7 +28,7 @@ public class ApnsPushSender implements PushSender {
 
     @Override
     public String send(PushRequest request) throws Exception {
-        ApnsPayloadBuilder payload = new SimpleApnsPayloadBuilder()
+        var payload = new SimpleApnsPayloadBuilder()
                 .setAlertTitle(request.title())
                 .setAlertBody(request.body());
         request.attributes().forEach(payload::addCustomProperty);
