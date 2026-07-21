@@ -1,5 +1,6 @@
 package sk.solodev.notify.email.smtp;
 
+import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.core.io.ByteArrayResource;
@@ -9,6 +10,7 @@ import sk.solodev.notify.email.EmailAddress;
 import sk.solodev.notify.email.EmailRequest;
 import sk.solodev.notify.email.EmailSender;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
@@ -48,8 +50,7 @@ public class SmtpEmailSender implements EmailSender {
 
         if (request.htmlBody() != null) {
             helper.setText(request.body(), request.htmlBody());   // multipart/alternative
-        }
-        else {
+        } else {
             helper.setText(request.body(), false);
         }
 
@@ -66,7 +67,7 @@ public class SmtpEmailSender implements EmailSender {
         return UUID.randomUUID().toString();
     }
 
-    private static InternetAddress[] addresses(List<EmailAddress> list) throws Exception {
+    private static InternetAddress[] addresses(List<EmailAddress> list) throws AddressException, UnsupportedEncodingException {
         var result = new InternetAddress[list.size()];
         for (int i = 0; i < list.size(); i++) {
             result[i] = address(list.get(i));
@@ -74,7 +75,7 @@ public class SmtpEmailSender implements EmailSender {
         return result;
     }
 
-    private static InternetAddress address(EmailAddress address) throws Exception {
+    private static InternetAddress address(EmailAddress address) throws UnsupportedEncodingException, AddressException {
         return address.name() != null
                 ? new InternetAddress(address.address(), address.name(), StandardCharsets.UTF_8.name())
                 : new InternetAddress(address.address());

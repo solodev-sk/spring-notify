@@ -174,6 +174,24 @@ notifier.notify(EmailRequest.builder()
         .build());
 ```
 
+Email is the richest channel — it maps the full RFC 5322 field set: multiple `to`/`cc`/`bcc`
+recipients, display names, `replyTo`, an optional HTML alternative, attachments, and custom headers:
+
+```java
+notifier.notify(EmailRequest.builder()
+        .to(new EmailAddress("Alice", "alice@example.com"))   // or .to("alice@example.com")
+        .cc("team@example.com")
+        .bcc("audit@example.com")
+        .from("shop@example.com")
+        .replyTo("support@example.com")
+        .subject("Your invoice")
+        .body("Plain-text version")
+        .htmlBody("<h1>Your invoice</h1><p>Thanks for your order.</p>")
+        .attachment("invoice.pdf", pdfBytes, "application/pdf")
+        .header("X-Campaign", "invoices")
+        .build());
+```
+
 ### Chat — Slack
 
 ```yaml
@@ -281,6 +299,20 @@ class SmsRateLimiter extends ChannelInterceptor<SmsRequest> {
 }
 ```
 
+> **Retry, rate limiting, fallback** are yours to add here — wrap `chain.proceed(...)` with
+> Spring's `RetryTemplate`, Resilience4j, or your own logic. The library deliberately doesn't
+> impose a retry policy, because whether a resend is safe (idempotency) is your call, not the framework's.
+
+## Observability
+
+When Micrometer is on the classpath and an `ObservationRegistry` bean exists (e.g. with Spring Boot
+Actuator), every send is wrapped in a Micrometer `Observation` automatically — one **timer**, one
+**tracing span**, and structured **logs** per notification, tagged with the channel
+(`notify.channel = sms | push | email | chat`). No configuration needed; nothing is added if
+Micrometer is absent.
+
+Customise the tags or name by declaring your own `NotificationObservationConvention` bean.
+
 ---
 
 ## How it fits together
@@ -320,7 +352,6 @@ You depend on a provider starter; everything below it comes transitively.
 
 - More providers per channel — SMS (Vonage, AWS SNS), push (APNs), email (SendGrid, SES), chat (Discord).
 - Publishing to Maven Central.
-- Built-in observability (Micrometer) and retry support around delivery.
 
 Contributions and provider requests welcome.
 
