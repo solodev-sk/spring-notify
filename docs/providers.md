@@ -52,6 +52,38 @@ spring:
         service-account: ${FCM_SERVICE_ACCOUNT_JSON}   # the service-account JSON, inline
 ```
 
+The starter configures a single `FirebaseMessaging` from one service account. If you need to send
+to **several Firebase projects** (e.g. one per mobile app or per tenant), don't set the property
+above — instead register your own `PushSender` that holds a `FirebaseMessaging` per project and
+selects by a request attribute. Because the sender is `@ConditionalOnMissingBean`, yours replaces
+the auto-configured one:
+
+```java
+@Component
+class MultiAppFcmPushSender implements PushSender {
+
+    private final Map<String, FirebaseMessaging> byApp;   // built once, one per FirebaseApp
+
+    public String send(PushRequest request) throws Exception {
+        var app = (String) request.attributes().get("app");   // caller picks the target project
+        var messaging = byApp.get(app);
+        Assert.notNull(messaging, () -> "no Firebase app configured for '" + app + "'");
+        return new FcmPushSender(messaging).send(request);     // reuse the bundled sender's mapping
+    }
+}
+```
+
+```java
+notifier.notify(PushRequest.builder()
+        .to(deviceToken).title("Hi").body("…")
+        .attribute("app", "storefront")   // routes to that project's FirebaseMessaging
+        .build());
+```
+
+Initialise each `FirebaseApp` with a distinct name (`FirebaseApp.initializeApp(options, "storefront")`)
+so they coexist. This is the same escape hatch as any custom sender — you wire the SDK instances
+yourself, but reuse `FcmPushSender` for the request→FCM mapping.
+
 ### APNs (iOS, token auth)
 
 ```yaml

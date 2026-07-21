@@ -1,7 +1,5 @@
 package sk.solodev.notify.push.fcm;
 
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.gson.GsonFactory;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -37,8 +35,6 @@ public class FcmAutoConfiguration {
     public FirebaseApp notifyFirebaseApp(FcmProperties properties) throws IOException {
         var options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(new ByteArrayInputStream(properties.serviceAccount().getBytes(StandardCharsets.UTF_8))))
-//                .setHttpTransport(new NetHttpTransport())
-//                .setJsonFactory(GsonFactory.getDefaultInstance())
                 .build();
         return FirebaseApp.initializeApp(options, "spring-notify");
     }
