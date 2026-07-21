@@ -97,6 +97,26 @@ class OrderService {
 `notify(...)` returns the provider message id, or throws `NotificationDeliveryException`
 (carrying the failed request) if delivery fails.
 
+### Sending asynchronously
+
+Delivery is network I/O — an SMTP round-trip or an HTTP call to a provider. To avoid blocking
+the caller, use `notifyAsync`, which runs the whole pipeline (interceptors, routing, the provider
+call) off the calling thread and hands back a `CompletableFuture<String>`:
+
+```java
+notifier.notifyAsync(SmsRequest.builder()
+                .to(order.phone())
+                .from("+421900999888")
+                .message("Your order has shipped")
+                .build())
+        .thenAccept(messageId -> log.info("sent {}", messageId))
+        .exceptionally(ex -> { log.warn("send failed", ex); return null; });
+```
+
+It runs on Spring Boot's `applicationTaskExecutor`, so setting `spring.threads.virtual.enabled=true`
+makes every async send use a virtual thread — no extra configuration. The future completes
+exceptionally with the same `NotificationDeliveryException` that `notify(...)` would throw.
+
 ---
 
 ## Channels & providers

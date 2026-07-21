@@ -4,8 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -71,5 +74,33 @@ class DefaultNotifierTest {
 
         assertThat(messageId).isEqualTo("SHORT");
         assertThat(seen).isEmpty();
+    }
+
+    @Test
+    void notifyAsyncRunsTheWholePipelineOnTheConfiguredExecutorAndReturnsTheMessageId() throws Exception {
+        var executorThreads = new ArrayList<String>();
+        Executor executor = task -> Executors.newSingleThreadExecutor(r -> new Thread(r, "notify-async"))
+                .execute(() -> {
+                    executorThreads.add(Thread.currentThread().getName());
+                    task.run();
+                });
+        var svc = new DefaultNotifier(List.of(recordingAdapter(new ArrayList<>())),
+                new DefaultAdapterResolver(), List.of(), executor);
+
+        var messageId = svc.notifyAsync(request).get();
+
+        assertThat(messageId).isEqualTo("MID");
+        assertThat(executorThreads).containsExactly("notify-async");
+    }
+
+    @Test
+    void notifyAsyncCompletesExceptionallyWhenDeliveryFails() {
+        NotificationInterceptor boom = (_, _) -> {
+            throw new NotificationDeliveryException("delivery failed", request, new IllegalStateException("down"));
+        };
+        var svc = service(List.of(recordingAdapter(new ArrayList<>())), List.of(boom));
+
+        assertThatThrownBy(() -> svc.notifyAsync(request).get())
+                .hasCauseInstanceOf(NotificationDeliveryException.class);
     }
 }
