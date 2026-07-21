@@ -1,4 +1,4 @@
-package sk.solodev.notify.autoconfigure.observation;
+package sk.solodev.notify;
 
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationConvention;

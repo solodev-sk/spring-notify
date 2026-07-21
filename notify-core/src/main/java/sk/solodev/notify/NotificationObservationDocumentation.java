@@ -1,4 +1,4 @@
-package sk.solodev.notify.autoconfigure.observation;
+package sk.solodev.notify;
 
 import io.micrometer.common.docs.KeyName;
 import io.micrometer.observation.docs.ObservationDocumentation;

@@ -382,11 +382,11 @@ class SmsRateLimiter extends ChannelInterceptor<SmsRequest> {
 
 ## Observability
 
-When Micrometer is on the classpath and an `ObservationRegistry` bean exists (e.g. with Spring Boot
-Actuator), every send is wrapped in a Micrometer `Observation` automatically — one **timer**, one
-**tracing span**, and structured **logs** per notification, tagged with the channel
-(`notify.channel = sms | push | email | chat`). No configuration needed; nothing is added if
-Micrometer is absent.
+When an `ObservationRegistry` bean is present (add `spring-boot-starter-actuator`), every send is
+wrapped in a Micrometer `Observation` automatically — one **timer**, one **tracing span**, and
+structured **logs** per notification, tagged with the channel
+(`notify.channel = sms | push | email | chat`). No configuration needed; without a registry bean
+nothing is registered and sends are simply unobserved.
 
 Customise the tags or name by declaring your own `NotificationObservationConvention` bean.
 
