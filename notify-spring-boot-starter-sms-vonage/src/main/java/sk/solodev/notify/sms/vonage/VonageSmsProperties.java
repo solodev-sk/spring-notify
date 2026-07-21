@@ -2,7 +2,12 @@ package sk.solodev.notify.sms.vonage;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-/** Vonage configuration: {@code apiKey} and {@code apiSecret} from the Vonage dashboard. Under {@code spring.notify.sms.vonage}. */
+/**
+ * Vonage credentials from the Vonage dashboard. Configured under {@code spring.notify.sms.vonage}.
+ *
+ * @param apiKey    the Vonage API key
+ * @param apiSecret the Vonage API secret
+ */
 @ConfigurationProperties("spring.notify.sms.vonage")
 public record VonageSmsProperties(String apiKey, String apiSecret) {
 
