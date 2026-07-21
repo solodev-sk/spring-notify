@@ -20,7 +20,6 @@ notifier.notify(SmsRequest.builder()
 - [Providers](providers.md) — the provider matrix and per-provider configuration.
 - [Observability & events](observability-and-events.md) — Micrometer observation, lifecycle events, interceptor ordering.
 - [Testing](testing.md) — asserting notifications with `RecordingNotifier`.
-- [Adding a provider](adding-a-provider.md) — the five-file pattern for a new backend.
 
 > Status: `0.1.0-SNAPSHOT` · Java 25 · Spring Boot 4.1. Not yet on Maven Central — build locally
 > with `./mvnw install`.

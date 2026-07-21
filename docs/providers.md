@@ -117,4 +117,5 @@ class MyGatewaySmsSender implements SmsSender {   // SmsSender extends Notificat
 }
 ```
 
-To contribute a provider back, see [Adding a provider](adding-a-provider.md).
+That's it — `notifier.notify(SmsRequest…)` now routes to your sender. The same pattern works for
+`PushSender`, `EmailSender`, and `ChatSender`.
