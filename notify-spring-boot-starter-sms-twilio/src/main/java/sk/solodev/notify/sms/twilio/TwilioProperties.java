@@ -12,6 +12,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @since 1.0.0
  */
 @ConfigurationProperties("spring.notify.sms.twilio")
-public record TwilioSmsProperties(String accountSid, String authToken) {
+public record TwilioProperties(String accountSid, String authToken) {
 
 }

@@ -12,6 +12,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @since 1.0.0
  */
 @ConfigurationProperties("spring.notify.sms.vonage")
-public record VonageSmsProperties(String apiKey, String apiSecret) {
+public record VonageProperties(String apiKey, String apiSecret) {
 
 }

@@ -1,13 +1,13 @@
 package sk.solodev.notify.sms.twilio;
 
 import com.twilio.http.TwilioRestClient;
-import sk.solodev.notify.sms.SmsAutoConfiguration;
-import sk.solodev.notify.sms.SmsSender;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import sk.solodev.notify.sms.SmsAutoConfiguration;
+import sk.solodev.notify.sms.SmsSender;
 
 /**
  * Registers a Twilio-backed {@link SmsSender} when
@@ -19,13 +19,13 @@ import org.springframework.context.annotation.Bean;
  * @since 1.0.0
  */
 @AutoConfiguration(before = SmsAutoConfiguration.class)
-@EnableConfigurationProperties(TwilioSmsProperties.class)
+@EnableConfigurationProperties(TwilioProperties.class)
 @ConditionalOnProperty(prefix = "spring.notify.sms.twilio", name = "account-sid")
 public class TwilioSmsAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public TwilioRestClient twilioRestClient(TwilioSmsProperties properties) {
+    public TwilioRestClient twilioRestClient(TwilioProperties properties) {
         return new TwilioRestClient.Builder(properties.accountSid(), properties.authToken()).build();
     }
 

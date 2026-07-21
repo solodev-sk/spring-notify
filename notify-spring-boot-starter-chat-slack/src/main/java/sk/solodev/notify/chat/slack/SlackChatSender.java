@@ -11,7 +11,7 @@ import java.io.IOException;
  * {@link ChatSender} backed by the Slack SDK. Posts via {@code chat.postMessage} to the
  * channel given by {@code request.to()} and returns the message timestamp ({@code ts}).
  * Provider failures propagate (checked SDK exceptions or a runtime error for a non-ok
- * response); the {@code ChatChannelAdapter} converts them to {@code NotificationDeliveryException}.
+ * response); the {@code SenderChannelAdapter} converts them to {@code NotificationDeliveryException}.
  *
  * @author Dominik Kovács
  * @since 1.0.0
@@ -30,7 +30,7 @@ public class SlackChatSender implements ChatSender {
                 .channel(request.to())
                 .text(request.message()));
         if (!response.isOk()) {
-            throw new RuntimeException("Slack chat.postMessage failed: " + response.getError());
+            throw new RuntimeException("Slack rejected the message: " + response.getError());
         }
         return response.getTs();
     }

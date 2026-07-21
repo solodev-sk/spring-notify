@@ -2,13 +2,13 @@ package sk.solodev.notify.sms.vonage;
 
 import com.vonage.client.VonageClient;
 import com.vonage.client.sms.SmsClient;
-import sk.solodev.notify.sms.SmsAutoConfiguration;
-import sk.solodev.notify.sms.SmsSender;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import sk.solodev.notify.sms.SmsAutoConfiguration;
+import sk.solodev.notify.sms.SmsSender;
 
 /**
  * Registers a Vonage-backed {@link SmsSender} when
@@ -20,13 +20,13 @@ import org.springframework.context.annotation.Bean;
  * @since 1.0.0
  */
 @AutoConfiguration(before = SmsAutoConfiguration.class)
-@EnableConfigurationProperties(VonageSmsProperties.class)
+@EnableConfigurationProperties(VonageProperties.class)
 @ConditionalOnProperty(prefix = "spring.notify.sms.vonage", name = "api-key")
 public class VonageSmsAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public SmsClient vonageSmsClient(VonageSmsProperties properties) {
+    public SmsClient vonageSmsClient(VonageProperties properties) {
         return VonageClient.builder()
                 .apiKey(properties.apiKey())
                 .apiSecret(properties.apiSecret())

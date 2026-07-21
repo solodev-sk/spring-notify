@@ -25,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 @AutoConfiguration(before = PushAutoConfiguration.class)
 @EnableConfigurationProperties(ApnsProperties.class)
 @ConditionalOnProperty(prefix = "spring.notify.push.apns", name = "signing-key")
-public class ApnsAutoConfiguration {
+public class ApnsPushAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean

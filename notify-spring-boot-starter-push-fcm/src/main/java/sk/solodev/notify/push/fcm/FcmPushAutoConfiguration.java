@@ -4,13 +4,13 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
-import sk.solodev.notify.push.PushAutoConfiguration;
-import sk.solodev.notify.push.PushSender;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import sk.solodev.notify.push.PushAutoConfiguration;
+import sk.solodev.notify.push.PushSender;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import java.nio.charset.StandardCharsets;
 @AutoConfiguration(before = PushAutoConfiguration.class)
 @EnableConfigurationProperties(FcmProperties.class)
 @ConditionalOnProperty(prefix = "spring.notify.push.fcm", name = "service-account")
-public class FcmAutoConfiguration {
+public class FcmPushAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean

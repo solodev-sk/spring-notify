@@ -180,7 +180,7 @@ public record EmailRequest(List<EmailAddress> to, List<EmailAddress> cc, List<Em
         }
 
         public Builder attribute(String key, Object value) {
-            this.attributes.put(key, value);
+            attributes.put(key, value);
             return this;
         }
 
