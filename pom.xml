@@ -24,6 +24,7 @@
         <google-http-client.version>2.1.0</google-http-client.version>
         <slack-api-client.version>1.45.3</slack-api-client.version>
         <pushy.version>0.15.4</pushy.version>
+        <sendgrid.version>4.10.3</sendgrid.version>
     </properties>
 
     <modules>
@@ -37,6 +38,7 @@
         <module>notify-spring-boot-starter-push-fcm</module>
         <module>notify-spring-boot-starter-push-apns</module>
         <module>notify-spring-boot-starter-email-smtp</module>
+        <module>notify-spring-boot-starter-email-sendgrid</module>
         <module>notify-spring-boot-starter-chat-slack</module>
     </modules>
 
@@ -106,6 +108,11 @@
                 <groupId>com.eatthepath</groupId>
                 <artifactId>pushy</artifactId>
                 <version>${pushy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sendgrid</groupId>
+                <artifactId>sendgrid-java</artifactId>
+                <version>${sendgrid.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
