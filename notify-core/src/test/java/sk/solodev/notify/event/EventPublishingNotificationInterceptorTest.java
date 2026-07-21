@@ -1,8 +1,11 @@
 package sk.solodev.notify.event;
 
+import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
 import sk.solodev.notify.NotificationRequest;
 import sk.solodev.notify.interceptor.NotificationInterceptor;
+import sk.solodev.notify.observation.DefaultNotificationObservationConvention;
+import sk.solodev.notify.observation.ObservationNotificationInterceptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,5 +49,13 @@ class EventPublishingNotificationInterceptorTest {
 
         assertThat(events).singleElement()
                 .isEqualTo(new NotificationFailed(request, boom));
+    }
+
+    @Test
+    void isOrderedJustOutsideObservationSoTheDeliverySpanExcludesListeners() {
+        var observation = new ObservationNotificationInterceptor(
+                ObservationRegistry.NOOP, new DefaultNotificationObservationConvention());
+        // lower order = further out; events must sit strictly outside the observation
+        assertThat(interceptor.getOrder()).isLessThan(observation.getOrder());
     }
 }

@@ -2,6 +2,7 @@ package sk.solodev.notify.observation;
 
 import io.micrometer.observation.tck.TestObservationRegistry;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.Ordered;
 import sk.solodev.notify.NotificationRequest;
 import sk.solodev.notify.interceptor.NotificationInterceptor;
 
@@ -45,5 +46,10 @@ class ObservationNotificationInterceptorTest {
                 .hasObservationWithNameEqualTo("spring.notify.send")
                 .that()
                 .hasError();
+    }
+
+    @Test
+    void isOrderedInnermostSoTheSpanExcludesEverythingButDelivery() {
+        assertThat(interceptor.getOrder()).isEqualTo(Ordered.LOWEST_PRECEDENCE);
     }
 }

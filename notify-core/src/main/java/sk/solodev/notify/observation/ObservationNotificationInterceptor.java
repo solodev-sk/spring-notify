@@ -10,12 +10,13 @@ import sk.solodev.notify.interceptor.NotificationInterceptor;
  * Wraps every send in a Micrometer {@link io.micrometer.observation.Observation}, yielding a
  * timer, a tracing span, and (with a logging handler) structured logs per notification.
  *
- * <p>Ordered outermost ({@link Ordered#HIGHEST_PRECEDENCE}), so the observation measures the
- * <strong>entire</strong> send: any lower-ordered interceptors, adapter resolution, and the
- * provider SDK/network call — not just the provider call in isolation. Every failure, from any
- * layer, is recorded as {@code outcome=ERROR}. A slow or blocking interceptor (e.g. rate limiting)
- * is therefore included in the timing, which reflects the caller's true wait. To measure provider
- * latency alone, add a separate observation inside the sender.
+ * <p>Ordered innermost ({@link Ordered#LOWEST_PRECEDENCE}), so the observation measures the
+ * <strong>delivery</strong> — adapter resolution and the provider SDK/network call — and nothing
+ * else. Everything outside it is excluded: a rate-limiting interceptor's wait, a retry wrapper's
+ * backoff, and {@code @EventListener} execution all fall outside the span, so {@code
+ * spring.notify.send} reflects provider latency rather than the caller's total wait (which the
+ * enclosing request or scheduled-task span already captures). Under a retry interceptor each
+ * attempt is its own span; a short-circuit that never reaches the provider records nothing.
  */
 public class ObservationNotificationInterceptor implements NotificationInterceptor, Ordered {
 
@@ -38,7 +39,7 @@ public class ObservationNotificationInterceptor implements NotificationIntercept
 
     @Override
     public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
+        return Ordered.LOWEST_PRECEDENCE;
     }
 
     /** Derives the channel tag from the request type: {@code SmsRequest} → {@code sms}. */

@@ -11,11 +11,12 @@ import sk.solodev.notify.interceptor.NotificationInterceptor;
  * (then rethrows) on failure, letting applications react with {@code @EventListener} — audit
  * trails, dead-lettering, app-side retry — without wrapping the send.
  *
- * <p>Ordered innermost ({@link Ordered#LOWEST_PRECEDENCE}), as close to the provider call as
- * possible, so events reflect the <strong>actual</strong> delivery: any other interceptor (retry,
+ * <p>Ordered near-innermost ({@link Ordered#LOWEST_PRECEDENCE} - 1), just outside the observation
+ * interceptor, so events reflect the <strong>actual</strong> delivery: any other interceptor (retry,
  * rate limiting, a short-circuit) sits outside it. A short-circuit that returns without delivering
  * therefore publishes no event, a user retry wrapper sees one {@link NotificationFailed} per real
  * attempt, and the failure carried is the {@link NotificationDeliveryException} the adapter throws.
+ * Sitting just outside the observation means the delivery span excludes {@code @EventListener} time.
  */
 public class EventPublishingNotificationInterceptor implements NotificationInterceptor, Ordered {
 
@@ -40,6 +41,6 @@ public class EventPublishingNotificationInterceptor implements NotificationInter
 
     @Override
     public int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE;
+        return Ordered.LOWEST_PRECEDENCE - 1;
     }
 }

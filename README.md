@@ -388,6 +388,12 @@ structured **logs** per notification, tagged with the channel
 (`notify.channel = sms | push | email | chat`). No configuration needed; without a registry bean
 nothing is registered and sends are simply unobserved.
 
+The observation is **delivery-scoped**: `spring.notify.send` times the provider call itself, not
+your interceptors. A rate-limiter's wait or a retry wrapper's backoff falls *outside* the span, so
+the timer reflects provider latency rather than the caller's total wait — which the enclosing
+request or scheduled-task span already captures. Under a retry interceptor each attempt is its own
+span. To measure the caller's total wait, read the enclosing span, not this one.
+
 Customise the tags or name by declaring your own `NotificationObservationConvention` bean.
 
 ## Events
