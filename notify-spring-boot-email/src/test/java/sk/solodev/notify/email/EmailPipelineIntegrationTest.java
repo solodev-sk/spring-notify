@@ -18,7 +18,7 @@ class EmailPipelineIntegrationTest {
 
     private final ApplicationContextRunner runner = new ApplicationContextRunner()
             .withConfiguration(AutoConfigurations.of(NotificationAutoConfiguration.class, EmailAutoConfiguration.class))
-            .withBean(EmailSender.class, () -> request -> "MID-" + request.to());
+            .withBean(EmailSender.class, () -> request -> "MID-" + request.subject());
 
     @Test
     void notifierRoutesEmailRequestThroughTheChannelAdapter() {
@@ -28,7 +28,7 @@ class EmailPipelineIntegrationTest {
 
             var messageId = ctx.getBean(Notifier.class).notify(
                     EmailRequest.builder().to("a@b.com").from("x@x.com").subject("s").body("b").build());
-            assertThat(messageId).isEqualTo("MID-a@b.com");
+            assertThat(messageId).isEqualTo("MID-s");
         });
     }
 }
