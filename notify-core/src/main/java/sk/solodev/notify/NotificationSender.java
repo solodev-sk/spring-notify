@@ -1,5 +1,8 @@
 package sk.solodev.notify;
 
+import sk.solodev.notify.dispatch.ChannelAdapter;
+import sk.solodev.notify.dispatch.SenderChannelAdapter;
+
 /**
  * SPI implemented by a provider for one channel: takes the canonical request and performs
  * the actual delivery, returning the provider message id. Each channel declares its own

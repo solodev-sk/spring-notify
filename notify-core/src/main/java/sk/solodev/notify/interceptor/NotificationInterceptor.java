@@ -1,4 +1,6 @@
-package sk.solodev.notify;
+package sk.solodev.notify.interceptor;
+
+import sk.solodev.notify.NotificationRequest;
 
 /**
  * Cross-cutting hook around each send. Interceptors are ordered (Spring

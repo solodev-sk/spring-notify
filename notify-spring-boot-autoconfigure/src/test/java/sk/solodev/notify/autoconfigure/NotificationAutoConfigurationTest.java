@@ -3,8 +3,8 @@ package sk.solodev.notify.autoconfigure;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
-import sk.solodev.notify.AdapterResolver;
-import sk.solodev.notify.DefaultAdapterResolver;
+import sk.solodev.notify.dispatch.AdapterResolver;
+import sk.solodev.notify.dispatch.DefaultAdapterResolver;
 import sk.solodev.notify.Notifier;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -1,7 +1,10 @@
-package sk.solodev.notify;
+package sk.solodev.notify.event;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.Ordered;
+import sk.solodev.notify.NotificationDeliveryException;
+import sk.solodev.notify.NotificationRequest;
+import sk.solodev.notify.interceptor.NotificationInterceptor;
 
 /**
  * Publishes a {@link NotificationSent} after a successful send and a {@link NotificationFailed}

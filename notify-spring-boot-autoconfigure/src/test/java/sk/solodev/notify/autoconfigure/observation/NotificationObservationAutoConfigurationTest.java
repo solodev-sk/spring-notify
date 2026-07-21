@@ -4,9 +4,9 @@ import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
-import sk.solodev.notify.DefaultNotificationObservationConvention;
-import sk.solodev.notify.NotificationObservationConvention;
-import sk.solodev.notify.ObservationNotificationInterceptor;
+import sk.solodev.notify.observation.DefaultNotificationObservationConvention;
+import sk.solodev.notify.observation.NotificationObservationConvention;
+import sk.solodev.notify.observation.ObservationNotificationInterceptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

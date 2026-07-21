@@ -1,4 +1,6 @@
-package sk.solodev.notify;
+package sk.solodev.notify.event;
+
+import sk.solodev.notify.NotificationRequest;
 
 /**
  * Published after a notification is accepted by its provider.

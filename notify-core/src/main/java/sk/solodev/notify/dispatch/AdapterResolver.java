@@ -1,4 +1,6 @@
-package sk.solodev.notify;
+package sk.solodev.notify.dispatch;
+
+import sk.solodev.notify.NotificationRequest;
 
 import java.util.List;
 

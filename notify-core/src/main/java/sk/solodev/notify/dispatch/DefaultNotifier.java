@@ -1,6 +1,9 @@
-package sk.solodev.notify;
+package sk.solodev.notify.dispatch;
 
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import sk.solodev.notify.NotificationRequest;
+import sk.solodev.notify.Notifier;
+import sk.solodev.notify.interceptor.NotificationInterceptor;
 
 import java.util.ArrayList;
 import java.util.List;

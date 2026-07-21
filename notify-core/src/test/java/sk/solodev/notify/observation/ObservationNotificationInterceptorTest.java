@@ -1,7 +1,9 @@
-package sk.solodev.notify;
+package sk.solodev.notify.observation;
 
 import io.micrometer.observation.tck.TestObservationRegistry;
 import org.junit.jupiter.api.Test;
+import sk.solodev.notify.NotificationRequest;
+import sk.solodev.notify.interceptor.NotificationInterceptor;
 
 import static io.micrometer.observation.tck.TestObservationRegistryAssert.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;

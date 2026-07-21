@@ -1,6 +1,8 @@
 package sk.solodev.notify;
 
 import org.junit.jupiter.api.Test;
+import sk.solodev.notify.dispatch.ChannelAdapter;
+import sk.solodev.notify.dispatch.DefaultAdapterResolver;
 
 import java.util.List;
 

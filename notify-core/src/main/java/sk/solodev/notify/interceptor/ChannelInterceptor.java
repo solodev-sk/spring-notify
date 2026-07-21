@@ -1,4 +1,6 @@
-package sk.solodev.notify;
+package sk.solodev.notify.interceptor;
+
+import sk.solodev.notify.NotificationRequest;
 
 /**
  * A {@link NotificationInterceptor} scoped to one channel: it only runs its logic for

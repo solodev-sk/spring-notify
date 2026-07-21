@@ -1,6 +1,7 @@
 package sk.solodev.notify;
 
 import org.junit.jupiter.api.Test;
+import sk.solodev.notify.dispatch.SenderChannelAdapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

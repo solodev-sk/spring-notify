@@ -1,6 +1,6 @@
 package sk.solodev.notify.email;
 
-import sk.solodev.notify.ChannelAdapter;
+import sk.solodev.notify.dispatch.ChannelAdapter;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;

@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import sk.solodev.notify.ChannelAdapter;
-import sk.solodev.notify.SenderChannelAdapter;
+import sk.solodev.notify.dispatch.ChannelAdapter;
+import sk.solodev.notify.dispatch.SenderChannelAdapter;
 
 /** Registers the push channel adapter when a provider {@link PushSender} bean is present. */
 @AutoConfiguration

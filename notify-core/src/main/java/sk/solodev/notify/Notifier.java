@@ -1,5 +1,9 @@
 package sk.solodev.notify;
 
+import sk.solodev.notify.dispatch.ChannelAdapter;
+import sk.solodev.notify.dispatch.DefaultNotifier;
+import sk.solodev.notify.interceptor.NotificationInterceptor;
+
 import java.util.concurrent.CompletableFuture;
 
 /**

@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import sk.solodev.notify.ChannelAdapter;
+import sk.solodev.notify.dispatch.ChannelAdapter;
 import sk.solodev.notify.email.EmailAutoConfiguration;
 import sk.solodev.notify.email.EmailSender;
 

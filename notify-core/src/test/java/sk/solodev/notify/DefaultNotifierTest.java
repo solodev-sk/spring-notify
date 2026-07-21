@@ -2,6 +2,10 @@ package sk.solodev.notify;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.core.annotation.Order;
+import sk.solodev.notify.dispatch.ChannelAdapter;
+import sk.solodev.notify.dispatch.DefaultAdapterResolver;
+import sk.solodev.notify.dispatch.DefaultNotifier;
+import sk.solodev.notify.interceptor.NotificationInterceptor;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,8 +1,8 @@
-package sk.solodev.notify;
+package sk.solodev.notify.observation;
 
 import io.micrometer.common.KeyValues;
 
-import static sk.solodev.notify.NotificationObservationDocumentation.LowCardinalityKeys.CHANNEL;
+import static sk.solodev.notify.observation.NotificationObservationDocumentation.LowCardinalityKeys.CHANNEL;
 
 /**
  * Default {@link NotificationObservationConvention}: names the observation

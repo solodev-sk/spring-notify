@@ -1,6 +1,8 @@
 package sk.solodev.notify;
 
 import org.junit.jupiter.api.Test;
+import sk.solodev.notify.interceptor.ChannelInterceptor;
+import sk.solodev.notify.interceptor.NotificationInterceptor;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

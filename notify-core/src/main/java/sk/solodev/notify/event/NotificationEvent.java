@@ -1,4 +1,6 @@
-package sk.solodev.notify;
+package sk.solodev.notify.event;
+
+import sk.solodev.notify.NotificationRequest;
 
 /**
  * An event published for every completed send attempt: {@link NotificationSent} on success,

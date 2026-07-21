@@ -1,6 +1,8 @@
-package sk.solodev.notify;
+package sk.solodev.notify.event;
 
 import org.junit.jupiter.api.Test;
+import sk.solodev.notify.NotificationRequest;
+import sk.solodev.notify.interceptor.NotificationInterceptor;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -5,9 +5,9 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import sk.solodev.notify.DefaultNotificationObservationConvention;
-import sk.solodev.notify.NotificationObservationConvention;
-import sk.solodev.notify.ObservationNotificationInterceptor;
+import sk.solodev.notify.observation.DefaultNotificationObservationConvention;
+import sk.solodev.notify.observation.NotificationObservationConvention;
+import sk.solodev.notify.observation.ObservationNotificationInterceptor;
 
 /**
  * Registers Micrometer observability for notifications when an {@link ObservationRegistry} bean

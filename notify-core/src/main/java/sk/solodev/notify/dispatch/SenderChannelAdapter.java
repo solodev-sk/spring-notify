@@ -1,4 +1,8 @@
-package sk.solodev.notify;
+package sk.solodev.notify.dispatch;
+
+import sk.solodev.notify.NotificationDeliveryException;
+import sk.solodev.notify.NotificationRequest;
+import sk.solodev.notify.NotificationSender;
 
 /**
  * Generic {@link ChannelAdapter} for the common case: route requests of one concrete type

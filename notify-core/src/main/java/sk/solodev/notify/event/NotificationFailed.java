@@ -1,4 +1,7 @@
-package sk.solodev.notify;
+package sk.solodev.notify.event;
+
+import sk.solodev.notify.NotificationDeliveryException;
+import sk.solodev.notify.NotificationRequest;
 
 /**
  * Published when a notification fails to deliver.

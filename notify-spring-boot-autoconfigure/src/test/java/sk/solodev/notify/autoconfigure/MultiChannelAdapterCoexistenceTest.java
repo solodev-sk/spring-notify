@@ -5,9 +5,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import sk.solodev.notify.ChannelAdapter;
+import sk.solodev.notify.dispatch.ChannelAdapter;
 import sk.solodev.notify.NotificationRequest;
-import sk.solodev.notify.SenderChannelAdapter;
+import sk.solodev.notify.dispatch.SenderChannelAdapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -1,10 +1,10 @@
 package sk.solodev.notify.autoconfigure;
 
-import sk.solodev.notify.AdapterResolver;
-import sk.solodev.notify.ChannelAdapter;
-import sk.solodev.notify.DefaultAdapterResolver;
-import sk.solodev.notify.DefaultNotifier;
-import sk.solodev.notify.NotificationInterceptor;
+import sk.solodev.notify.dispatch.AdapterResolver;
+import sk.solodev.notify.dispatch.ChannelAdapter;
+import sk.solodev.notify.dispatch.DefaultAdapterResolver;
+import sk.solodev.notify.dispatch.DefaultNotifier;
+import sk.solodev.notify.interceptor.NotificationInterceptor;
 import sk.solodev.notify.Notifier;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;

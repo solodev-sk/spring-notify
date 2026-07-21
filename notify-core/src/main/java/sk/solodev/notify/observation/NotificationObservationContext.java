@@ -1,6 +1,7 @@
-package sk.solodev.notify;
+package sk.solodev.notify.observation;
 
 import io.micrometer.observation.Observation;
+import sk.solodev.notify.NotificationRequest;
 
 /**
  * {@link Observation.Context} for a single notification send. Carries the request and its

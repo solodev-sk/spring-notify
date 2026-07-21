@@ -1,4 +1,6 @@
-package sk.solodev.notify;
+package sk.solodev.notify.dispatch;
+
+import sk.solodev.notify.NotificationRequest;
 
 /**
  * Sends a notification over one channel. Implemented by channel modules and

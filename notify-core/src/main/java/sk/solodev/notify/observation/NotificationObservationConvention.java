@@ -1,4 +1,4 @@
-package sk.solodev.notify;
+package sk.solodev.notify.observation;
 
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationConvention;

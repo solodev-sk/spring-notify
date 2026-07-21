@@ -1,8 +1,10 @@
-package sk.solodev.notify;
+package sk.solodev.notify.observation;
 
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.core.Ordered;
+import sk.solodev.notify.NotificationRequest;
+import sk.solodev.notify.interceptor.NotificationInterceptor;
 
 /**
  * Wraps every send in a Micrometer {@link io.micrometer.observation.Observation}, yielding a
