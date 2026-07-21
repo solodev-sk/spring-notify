@@ -18,7 +18,7 @@ public class VonageSmsSender implements SmsSender {
     }
 
     @Override
-    public String send(SmsRequest request) throws Exception {
+    public String send(SmsRequest request) {
         SmsSubmissionResponse response = smsClient.submitMessage(
                 new TextMessage(request.from(), request.to(), request.message()));
 
