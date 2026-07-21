@@ -1,6 +1,5 @@
 package sk.solodev.notify.email.smtp;
 
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.core.io.ByteArrayResource;
@@ -54,24 +53,14 @@ public class SmtpEmailSender implements EmailSender {
             helper.setText(request.body(), false);
         }
 
-        request.attachments().forEach(attachment -> {
-            try {
-                helper.addAttachment(attachment.filename(),
-                        new ByteArrayResource(attachment.content()), attachment.contentType());
-            }
-            catch (MessagingException ex) {
-                throw new IllegalStateException("Failed to attach '" + attachment.filename() + "'", ex);
-            }
-        });
+        for (var attachment : request.attachments()) {
+            helper.addAttachment(attachment.filename(),
+                    new ByteArrayResource(attachment.content()), attachment.contentType());
+        }
 
-        request.headers().forEach((name, value) -> {
-            try {
-                message.setHeader(name, value);
-            }
-            catch (MessagingException ex) {
-                throw new IllegalArgumentException("Invalid email header '" + name + "'", ex);
-            }
-        });
+        for (var header : request.headers().entrySet()) {
+            message.setHeader(header.getKey(), header.getValue());
+        }
 
         mailSender.send(message);
         return UUID.randomUUID().toString();
