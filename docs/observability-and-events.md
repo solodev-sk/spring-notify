@@ -6,14 +6,16 @@ logical `notify()` call.
 
 ## Observability
 
-When an `ObservationRegistry` bean is present (add `spring-boot-starter-actuator`), every send is
-wrapped in a Micrometer `Observation` — one **timer**, one **tracing span**, and structured
-**logs**, tagged with the channel (`notify.channel = sms | push | email | chat`). Without a
-registry bean nothing is registered and sends are simply unobserved.
+When an `ObservationRegistry` bean is present, every send is wrapped in a Micrometer `Observation`
+— one **timer**, one **tracing span**, and structured **logs**, tagged with the channel
+(`notify.channel = sms | push | email | chat`). Without a registry bean nothing is registered and
+sends are simply unobserved.
 
-The observation registry bean comes from Boot's `spring-boot-micrometer-observation` module (pulled
-in by `spring-boot-starter-actuator`, among others) — in Boot 4 it is no longer part of
-`spring-boot-actuator-autoconfigure`.
+The registry bean is contributed by Boot's `spring-boot-micrometer-observation` module. You get it
+by depending on that module directly, or transitively — `spring-boot-starter-actuator` is the usual
+way. (In Boot 4 this moved out of `spring-boot-actuator-autoconfigure` into its own module, so
+Actuator is no longer where the observation auto-configuration lives — just a convenient way to pull
+it in.)
 
 ### Delivery-scoped by design
 
