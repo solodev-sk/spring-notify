@@ -1,5 +1,8 @@
 package sk.solodev.notify;
 
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -25,9 +28,8 @@ public class DefaultNotifier implements Notifier {
      *
      * @param adapters     the available channel adapters
      * @param resolver     selects the adapter for a given request
-     * @param interceptors interceptors to apply around each send, <strong>in the order they
-     *                     should run</strong> (outermost first) — this class does not sort them;
-     *                     the auto-configuration orders them by {@code @Order}/{@code Ordered}
+     * @param interceptors interceptors to apply around each send; sorted by
+     *                     {@code @Order}/{@link org.springframework.core.Ordered} (outermost first)
      */
     public DefaultNotifier(List<ChannelAdapter<?>> adapters, AdapterResolver resolver,
                            List<NotificationInterceptor> interceptors) {
@@ -37,8 +39,8 @@ public class DefaultNotifier implements Notifier {
     /**
      * @param adapters     the available channel adapters
      * @param resolver     selects the adapter for a given request
-     * @param interceptors interceptors to apply around each send, in the order they should run
-     *                     (outermost first); this class does not sort them
+     * @param interceptors interceptors to apply around each send; sorted by
+     *                     {@code @Order}/{@link org.springframework.core.Ordered} (outermost first)
      * @param executor     runs {@link #notifyAsync(NotificationRequest)}; typically the
      *                     application task executor (honours virtual threads when enabled)
      */
@@ -46,7 +48,9 @@ public class DefaultNotifier implements Notifier {
                            List<NotificationInterceptor> interceptors, Executor executor) {
         this.adapters = List.copyOf(adapters);
         this.resolver = resolver;
-        this.interceptors = List.copyOf(interceptors);
+        var ordered = new ArrayList<>(interceptors);
+        ordered.sort(AnnotationAwareOrderComparator.INSTANCE);
+        this.interceptors = List.copyOf(ordered);
         this.executor = executor;
     }
 

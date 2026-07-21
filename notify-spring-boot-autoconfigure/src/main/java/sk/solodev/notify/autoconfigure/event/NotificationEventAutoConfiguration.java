@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
+import sk.solodev.notify.EventPublishingNotificationInterceptor;
 
 /**
  * Registers the interceptor that publishes {@code NotificationSent} / {@code NotificationFailed}

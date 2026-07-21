@@ -1,11 +1,6 @@
-package sk.solodev.notify.autoconfigure.event;
+package sk.solodev.notify;
 
 import org.junit.jupiter.api.Test;
-import sk.solodev.notify.NotificationEvent;
-import sk.solodev.notify.NotificationFailed;
-import sk.solodev.notify.NotificationInterceptor;
-import sk.solodev.notify.NotificationRequest;
-import sk.solodev.notify.NotificationSent;
 
 import java.util.ArrayList;
 import java.util.List;

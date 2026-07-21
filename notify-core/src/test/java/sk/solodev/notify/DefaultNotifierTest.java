@@ -1,6 +1,7 @@
 package sk.solodev.notify;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.core.annotation.Order;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +92,34 @@ class DefaultNotifierTest {
 
         assertThat(messageId).isEqualTo("MID");
         assertThat(executorThreads).containsExactly("notify-async");
+    }
+
+    @Test
+    void sortsInterceptorsByOrderRegardlessOfConstructionOrder() {
+        var calls = new ArrayList<String>();
+
+        @Order(2)
+        class Second implements NotificationInterceptor {
+            public String intercept(NotificationRequest r, Chain c) {
+                calls.add("second");
+                return c.proceed(r);
+            }
+        }
+
+        @Order(1)
+        class First implements NotificationInterceptor {
+            public String intercept(NotificationRequest r, Chain c) {
+                calls.add("first");
+                return c.proceed(r);
+            }
+        }
+
+        // passed lowest-priority first; the notifier must still run them in @Order sequence
+        var svc = service(List.of(recordingAdapter(new ArrayList<>())), List.of(new Second(), new First()));
+
+        svc.notify(request);
+
+        assertThat(calls).containsExactly("first", "second");
     }
 
     @Test
