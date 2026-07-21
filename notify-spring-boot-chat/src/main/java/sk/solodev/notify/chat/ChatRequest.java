@@ -1,17 +1,17 @@
 package sk.solodev.notify.chat;
 
+import org.springframework.util.Assert;
 import sk.solodev.notify.NotificationRequest;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Canonical chat request. {@code to} is a provider-interpreted destination (a Slack
  * channel id like {@code "#alerts"}, a Discord channel id, …); {@code message} is the
  * text. Provider-specific rich content (Slack blocks, Discord embeds, …) travels in
- * {@code attributes}. Nullness is a compile-time contract (jspecify); there is no runtime
- * validation beyond {@code attributes} immutability normalization.
+ * {@code attributes}. Nullness is a compile-time contract (jspecify); {@code build()}
+ * additionally rejects blank {@code to} and {@code message}.
  */
 public record ChatRequest(String to, String message,
                           Map<String, Object> attributes) implements NotificationRequest {
@@ -52,10 +52,9 @@ public record ChatRequest(String to, String message,
         }
 
         public ChatRequest build() {
-            return new ChatRequest(
-                    Objects.requireNonNull(to, "to must be set"),
-                    Objects.requireNonNull(message, "message must be set"),
-                    attributes);
+            Assert.hasText(to, "to must be set");
+            Assert.hasText(message, "message must be set");
+            return new ChatRequest(to, message, attributes);
         }
     }
 }

@@ -1,18 +1,18 @@
 package sk.solodev.notify.sms;
 
 import org.jspecify.annotations.Nullable;
+import org.springframework.util.Assert;
 import sk.solodev.notify.NotificationRequest;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Canonical SMS request. {@code from} is the sender and is supplied by the consumer
  * (there is no channel-level default). Provider-specific options (media URLs,
  * messaging-service SID, …) travel in {@code attributes}. Nullness is a compile-time
- * contract (jspecify); there is no runtime validation beyond {@code attributes}
- * immutability normalization.
+ * contract (jspecify); {@code build()} additionally rejects blank {@code to}, {@code from},
+ * and {@code message}.
  */
 public record SmsRequest(String to, String from, String message,
                          Map<String, Object> attributes) implements NotificationRequest {
@@ -59,11 +59,10 @@ public record SmsRequest(String to, String from, String message,
         }
 
         public SmsRequest build() {
-            return new SmsRequest(
-                    Objects.requireNonNull(to, "to must be set"),
-                    Objects.requireNonNull(from, "from must be set"),
-                    Objects.requireNonNull(message, "message must be set"),
-                    attributes);
+            Assert.hasText(to, "to must be set");
+            Assert.hasText(from, "from must be set");
+            Assert.hasText(message, "message must be set");
+            return new SmsRequest(to, from, message, attributes);
         }
     }
 }

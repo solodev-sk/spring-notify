@@ -31,6 +31,12 @@ class PushRequestTest {
     @Test
     void buildRejectsMissingMandatoryField() {
         assertThat(catchThrowable(() -> PushRequest.builder().to("tok").build()))
-                .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void buildRejectsBlankMandatoryField() {
+        assertThat(catchThrowable(() -> PushRequest.builder().to("tok").title(" ").body("b").build()))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

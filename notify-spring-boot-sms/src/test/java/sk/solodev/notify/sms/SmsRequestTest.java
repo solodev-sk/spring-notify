@@ -22,7 +22,13 @@ class SmsRequestTest {
     @Test
     void buildRejectsMissingMandatoryField() {
         assertThat(catchThrowable(() -> SmsRequest.builder().to("+43111").build()))
-                .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void buildRejectsBlankMandatoryField() {
+        assertThat(catchThrowable(() -> SmsRequest.builder().to(" ").from("+43000").message("hi").build()))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

@@ -58,6 +58,14 @@ class EmailRequestTest {
     @Test
     void buildRejectsNoRecipients() {
         assertThat(catchThrowable(() -> EmailRequest.builder().from("x@x.com").subject("s").body("b").build()))
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void buildRejectsBlankSubjectOrBody() {
+        assertThat(catchThrowable(() -> EmailRequest.builder().to("a@b.com").from("x@x.com").subject(" ").body("b").build()))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThat(catchThrowable(() -> EmailRequest.builder().to("a@b.com").from("x@x.com").subject("s").body(" ").build()))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

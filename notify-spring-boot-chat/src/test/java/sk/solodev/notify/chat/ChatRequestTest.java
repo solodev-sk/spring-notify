@@ -28,6 +28,12 @@ class ChatRequestTest {
     @Test
     void buildRejectsMissingMandatoryField() {
         assertThat(catchThrowable(() -> ChatRequest.builder().to("#alerts").build()))
-                .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void buildRejectsBlankMandatoryField() {
+        assertThat(catchThrowable(() -> ChatRequest.builder().to("#alerts").message(" ").build()))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

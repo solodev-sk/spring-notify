@@ -1,6 +1,7 @@
 package sk.solodev.notify.email;
 
 import org.jspecify.annotations.Nullable;
+import org.springframework.util.Assert;
 import sk.solodev.notify.NotificationRequest;
 
 import java.util.ArrayList;
@@ -14,7 +15,8 @@ import java.util.Objects;
  * {@code bcc} recipients, {@code from}/{@code replyTo}, subject, a plain-text {@code body} and an
  * optional {@code htmlBody} (both present → {@code multipart/alternative}), file {@code attachments},
  * and custom {@code headers}. Anything still provider-specific travels in {@code attributes}.
- * Nullness is a compile-time contract (jspecify); collections are defensively copied.
+ * Nullness is a compile-time contract (jspecify); collections are defensively copied. {@code build()}
+ * requires at least one {@code to} recipient and rejects blank {@code subject} and {@code body}.
  */
 public record EmailRequest(List<EmailAddress> to, List<EmailAddress> cc, List<EmailAddress> bcc,
                            EmailAddress from, @Nullable EmailAddress replyTo,
@@ -149,14 +151,12 @@ public record EmailRequest(List<EmailAddress> to, List<EmailAddress> cc, List<Em
         }
 
         public EmailRequest build() {
-            if (to.isEmpty()) {
-                throw new IllegalStateException("at least one 'to' recipient must be set");
-            }
+            Assert.notEmpty(to, "at least one 'to' recipient must be set");
+            Assert.hasText(subject, "subject must be set");
+            Assert.hasText(body, "body must be set");
             return new EmailRequest(to, cc, bcc,
                     Objects.requireNonNull(from, "from must be set"),
-                    replyTo,
-                    Objects.requireNonNull(subject, "subject must be set"),
-                    Objects.requireNonNull(body, "body must be set"),
+                    replyTo, subject, body,
                     htmlBody, attachments, headers, attributes);
         }
     }
