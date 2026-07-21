@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "spring.notify.events.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to publish NotificationSent / NotificationFailed application events for each send.",
+      "defaultValue": true
+    }
+  ]
+}

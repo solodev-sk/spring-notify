@@ -19,6 +19,9 @@
 
     <properties>
         <java.version>25</java.version>
+        <!-- JDK 23+ no longer auto-runs classpath annotation processors; opt back in so the
+             Spring Boot configuration-processor generates spring-configuration-metadata.json -->
+        <maven.compiler.proc>full</maven.compiler.proc>
         <twilio.version>10.6.3</twilio.version>
         <firebase-admin.version>9.9.0</firebase-admin.version>
         <google-http-client.version>2.1.0</google-http-client.version>
