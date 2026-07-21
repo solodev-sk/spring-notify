@@ -12,7 +12,7 @@ notifier.notify(SmsRequest.builder()
         .build());
 ```
 
-> Status: `0.1.0-SNAPSHOT` · Java 25 · Spring Boot 4.1 · no runtime dependencies beyond
+> Status: `1.0.0-SNAPSHOT` · Java 25 · Spring Boot 4.1 · no runtime dependencies beyond
 > Spring and the provider SDK you choose.
 
 📖 **Full documentation lives in [`docs/`](docs/index.md).** This page is the overview.
@@ -50,7 +50,7 @@ git clone <repo> && cd spring-notify && ./mvnw install
 <dependency>
     <groupId>sk.solodev</groupId>
     <artifactId>notify-spring-boot-starter-sms-twilio</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
 

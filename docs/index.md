@@ -21,7 +21,7 @@ notifier.notify(SmsRequest.builder()
 - [Observability & events](observability-and-events.md) — Micrometer observation, lifecycle events, interceptor ordering.
 - [Testing](testing.md) — asserting notifications with `RecordingNotifier`.
 
-> Status: `0.1.0-SNAPSHOT` · Java 25 · Spring Boot 4.1. Not yet on Maven Central — build locally
+> Status: `1.0.0-SNAPSHOT` · Java 25 · Spring Boot 4.1. Not yet on Maven Central — build locally
 > with `./mvnw install`.
 
 For a one-page overview, see the [README](../README.md).

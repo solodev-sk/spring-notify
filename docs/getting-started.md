@@ -21,7 +21,7 @@ to the same version and you can omit `<version>` everywhere:
         <dependency>
             <groupId>sk.solodev</groupId>
             <artifactId>notify-bom</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>1.0.0-SNAPSHOT</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
