@@ -8,8 +8,14 @@ import sk.solodev.notify.NotificationRequest;
 
 /**
  * Wraps every send in a Micrometer {@link io.micrometer.observation.Observation}, yielding a
- * timer, a tracing span, and (with a logging handler) structured logs per notification. Ordered
- * outermost so it measures end-to-end latency and records every failure as {@code outcome=ERROR}.
+ * timer, a tracing span, and (with a logging handler) structured logs per notification.
+ *
+ * <p>Ordered outermost ({@link Ordered#HIGHEST_PRECEDENCE}), so the observation measures the
+ * <strong>entire</strong> send: any lower-ordered interceptors, adapter resolution, and the
+ * provider SDK/network call — not just the provider call in isolation. Every failure, from any
+ * layer, is recorded as {@code outcome=ERROR}. A slow or blocking interceptor (e.g. rate limiting)
+ * is therefore included in the timing, which reflects the caller's true wait. To measure provider
+ * latency alone, add a separate observation inside the sender.
  */
 public class ObservationNotificationInterceptor implements NotificationInterceptor, Ordered {
 
