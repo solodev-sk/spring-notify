@@ -5,6 +5,7 @@ import org.springframework.util.Assert;
 import sk.solodev.notify.NotificationRequest;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,33 +72,54 @@ public record EmailRequest(List<EmailAddress> to, List<EmailAddress> cc, List<Em
 
         }
 
-        public Builder to(String address) {
-            this.to.add(EmailAddress.of(address));
+        public Builder to(String... addresses) {
+            for (String address : addresses) {
+                this.to.add(EmailAddress.of(address));
+            }
             return this;
         }
 
-        public Builder to(EmailAddress address) {
-            this.to.add(address);
+        public Builder to(EmailAddress... addresses) {
+            this.to.addAll(List.of(addresses));
             return this;
         }
 
-        public Builder cc(String address) {
-            this.cc.add(EmailAddress.of(address));
+        public Builder to(Collection<EmailAddress> addresses) {
+            this.to.addAll(addresses);
             return this;
         }
 
-        public Builder cc(EmailAddress address) {
-            this.cc.add(address);
+        public Builder cc(String... addresses) {
+            for (String address : addresses) {
+                this.cc.add(EmailAddress.of(address));
+            }
             return this;
         }
 
-        public Builder bcc(String address) {
-            this.bcc.add(EmailAddress.of(address));
+        public Builder cc(EmailAddress... addresses) {
+            this.cc.addAll(List.of(addresses));
             return this;
         }
 
-        public Builder bcc(EmailAddress address) {
-            this.bcc.add(address);
+        public Builder cc(Collection<EmailAddress> addresses) {
+            this.cc.addAll(addresses);
+            return this;
+        }
+
+        public Builder bcc(String... addresses) {
+            for (String address : addresses) {
+                this.bcc.add(EmailAddress.of(address));
+            }
+            return this;
+        }
+
+        public Builder bcc(EmailAddress... addresses) {
+            this.bcc.addAll(List.of(addresses));
+            return this;
+        }
+
+        public Builder bcc(Collection<EmailAddress> addresses) {
+            this.bcc.addAll(addresses);
             return this;
         }
 
@@ -141,13 +163,33 @@ public record EmailRequest(List<EmailAddress> to, List<EmailAddress> cc, List<Em
             return this;
         }
 
+        public Builder attachments(Attachment... attachments) {
+            this.attachments.addAll(List.of(attachments));
+            return this;
+        }
+
+        public Builder attachments(Collection<Attachment> attachments) {
+            this.attachments.addAll(attachments);
+            return this;
+        }
+
         public Builder header(String name, String value) {
             this.headers.put(name, value);
             return this;
         }
 
+        public Builder headers(Map<String, String> headers) {
+            this.headers.putAll(headers);
+            return this;
+        }
+
         public Builder attribute(String key, Object value) {
             this.attributes.put(key, value);
+            return this;
+        }
+
+        public Builder attributes(Map<String, Object> attributes) {
+            this.attributes.putAll(attributes);
             return this;
         }
 
