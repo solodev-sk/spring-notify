@@ -1,0 +1,120 @@
+# Providers
+
+Each provider is a starter you add for the backend you use. Install **exactly one provider per
+channel** — two senders for the same channel is a wiring error reported at send time.
+
+| Channel | Provider starter | Config prefix |
+|---------|------------------|---------------|
+| SMS   | `notify-spring-boot-starter-sms-twilio`     | `spring.notify.sms.twilio`   |
+| SMS   | `notify-spring-boot-starter-sms-vonage`     | `spring.notify.sms.vonage`   |
+| Push  | `notify-spring-boot-starter-push-fcm`       | `spring.notify.push.fcm`     |
+| Push  | `notify-spring-boot-starter-push-apns`      | `spring.notify.push.apns`    |
+| Email | `notify-spring-boot-starter-email-smtp`     | `spring.notify.email.smtp`   |
+| Email | `notify-spring-boot-starter-email-sendgrid` | `spring.notify.email.sendgrid` |
+| Chat  | `notify-spring-boot-starter-chat-slack`     | `spring.notify.chat.slack`   |
+
+Each provider auto-configures itself only when its properties are present, and backs off if you
+define your own `*Sender` bean.
+
+## SMS
+
+### Twilio
+
+```yaml
+spring:
+  notify:
+    sms:
+      twilio:
+        account-sid: ${TWILIO_ACCOUNT_SID}
+        auth-token: ${TWILIO_AUTH_TOKEN}
+```
+
+### Vonage
+
+```yaml
+spring:
+  notify:
+    sms:
+      vonage:
+        api-key: ${VONAGE_API_KEY}
+        api-secret: ${VONAGE_API_SECRET}
+```
+
+## Push
+
+### Firebase Cloud Messaging (Android/web)
+
+```yaml
+spring:
+  notify:
+    push:
+      fcm:
+        service-account: ${FCM_SERVICE_ACCOUNT_JSON}   # the service-account JSON, inline
+```
+
+### APNs (iOS, token auth)
+
+```yaml
+spring:
+  notify:
+    push:
+      apns:
+        signing-key: ${APNS_SIGNING_KEY}   # the .p8 key contents
+        key-id: ${APNS_KEY_ID}
+        team-id: ${APNS_TEAM_ID}
+        topic: com.example.app             # your app's bundle id
+        production: true                   # false = sandbox
+```
+
+## Email
+
+### SMTP
+
+```yaml
+spring:
+  notify:
+    email:
+      smtp:
+        host: smtp.example.com
+        port: 587                # defaults to 587 when unset
+        username: ${SMTP_USERNAME}
+        password: ${SMTP_PASSWORD}
+```
+
+### SendGrid
+
+```yaml
+spring:
+  notify:
+    email:
+      sendgrid:
+        api-key: ${SENDGRID_API_KEY}
+```
+
+## Chat
+
+### Slack
+
+```yaml
+spring:
+  notify:
+    chat:
+      slack:
+        token: ${SLACK_BOT_TOKEN}   # xoxb-…
+```
+
+## Bringing your own provider
+
+Not using a bundled provider? Depend on the **channel** module instead of a provider starter and
+declare your own sender bean — the generic adapter picks it up:
+
+```java
+@Component
+class MyGatewaySmsSender implements SmsSender {   // SmsSender extends NotificationSender<SmsRequest>
+    public String send(SmsRequest request) throws Exception {
+        return myGateway.send(request.to(), request.from(), request.message());
+    }
+}
+```
+
+To contribute a provider back, see [Adding a provider](adding-a-provider.md).

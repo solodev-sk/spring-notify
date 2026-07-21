@@ -1,0 +1,71 @@
+# Observability & events
+
+Both features are cross-cutting interceptors contributed automatically. They sit at opposite ends
+of the chain from user interceptors, and both reflect the **actual delivery** rather than the
+logical `notify()` call.
+
+## Observability
+
+When an `ObservationRegistry` bean is present (add `spring-boot-starter-actuator`), every send is
+wrapped in a Micrometer `Observation` — one **timer**, one **tracing span**, and structured
+**logs**, tagged with the channel (`notify.channel = sms | push | email | chat`). Without a
+registry bean nothing is registered and sends are simply unobserved.
+
+The observation registry bean comes from Boot's `spring-boot-micrometer-observation` module (pulled
+in by `spring-boot-starter-actuator`, among others) — in Boot 4 it is no longer part of
+`spring-boot-actuator-autoconfigure`.
+
+### Delivery-scoped by design
+
+The observation interceptor runs **innermost**, so `spring.notify.send` times the provider call
+itself — not your interceptors. A rate-limiter's wait or a retry wrapper's backoff falls *outside*
+the span, so the timer reflects provider latency rather than the caller's total wait (which the
+enclosing request or scheduled-task span already captures). Under a retry interceptor, each attempt
+is its own span.
+
+To measure the caller's total wait, read the enclosing span, not this one.
+
+### Customising
+
+Declare your own `NotificationObservationConvention` bean to change the observation name or tags.
+
+## Events
+
+Every send publishes a Spring application event — `NotificationSent` (with the provider message id)
+on success, `NotificationFailed` (with the cause) on failure. Listen with `@EventListener` for
+audit trails, dead-lettering, or your own retry — no interceptor boilerplate:
+
+```java
+@Component
+class DeliveryAudit {
+
+    @EventListener
+    void onSent(NotificationSent event) {
+        log.info("sent {} via {}", event.messageId(), event.request().getClass().getSimpleName());
+    }
+
+    @EventListener
+    void onFailed(NotificationFailed event) {
+        deadLetterStore.save(event.request());
+    }
+}
+```
+
+Both implement the sealed `NotificationEvent`, so one listener can `switch` over them. Enabled by
+default; set `spring.notify.events.enabled=false` to turn publication off.
+
+The event interceptor runs just outside the observation interceptor — near-innermost — so events
+also reflect the actual delivery (a short-circuit that never reaches the provider publishes nothing;
+a retry wrapper sees one `NotificationFailed` per real attempt), while the delivery span still
+excludes `@EventListener` execution time.
+
+## Interceptor ordering, end to end
+
+From outermost to innermost:
+
+```
+[ your interceptors ]         (@Order / Ordered)
+  [ event publishing ]        (LOWEST_PRECEDENCE - 1)
+    [ observation ]           (LOWEST_PRECEDENCE, innermost)
+      resolve + provider send
+```

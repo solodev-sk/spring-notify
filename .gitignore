@@ -9,5 +9,5 @@ target/
 .superpowers/
 CLAUDE.md
 
-# docs
-docs/
+# private working notes (pitch, plan, design, handoff)
+.notes/

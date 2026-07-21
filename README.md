@@ -15,6 +15,9 @@ notifier.notify(SmsRequest.builder()
 > Status: `0.1.0-SNAPSHOT` · Java 25 · Spring Boot 4.1 · no runtime dependencies beyond
 > Spring and the provider SDK you choose.
 
+📖 **Full documentation is in [`docs/`](docs/index.md)** — getting started, concepts, the provider
+reference, observability, testing, and a guide to adding your own provider.
+
 ---
 
 ## Building
