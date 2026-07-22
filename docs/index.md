@@ -18,6 +18,7 @@ notifier.notify(SmsRequest.builder()
 - [Concepts](concepts.md) — the pipeline, the channel/provider split, how routing works.
 - [Channels](channels.md) — the four request types and their fields.
 - [Providers](providers.md) — the provider matrix and per-provider configuration.
+- [Interceptors](interceptors.md) — wrap every send for logging, rate limiting, retry, kill switches.
 - [Observability & events](observability-and-events.md) — Micrometer observation, lifecycle events, interceptor ordering.
 - [Testing](testing.md) — asserting notifications with `RecordingNotifier`.
 

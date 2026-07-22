@@ -110,7 +110,7 @@ documents the request fields.
 - **Lifecycle events** — `NotificationSent` / `NotificationFailed` published per send for audit,
   dead-lettering, or retry. → [Observability & events](docs/observability-and-events.md#events)
 - **Interceptors** — wrap every send (or one channel) for logging, rate limiting, retry, kill
-  switches. → [Concepts](docs/concepts.md#the-pipeline)
+  switches. → [Interceptors](docs/interceptors.md)
 - **Test double** — `RecordingNotifier` asserts sends without a real provider.
   → [Testing](docs/testing.md)
 

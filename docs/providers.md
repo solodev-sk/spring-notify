@@ -190,4 +190,4 @@ wiring those SDK clients yourself, without the auto-configuration the starters p
 
 ---
 
-Next: [Observability & events](observability-and-events.md) — metrics, tracing, and lifecycle events.
+Next: [Interceptors](interceptors.md) — wrap every send with your own cross-cutting logic.

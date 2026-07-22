@@ -29,7 +29,7 @@ your code → Notifier.notify(request)
 - **`NotificationInterceptor`** wraps every send — for cross-cutting behaviour (logging, rate
   limiting, retry, a feature-flag kill-switch). Global by default; extend `ChannelInterceptor<T>`
   to scope one to a single channel. Interceptors are ordered with `@Order`/`Ordered` and
-  `DefaultNotifier` sorts them itself.
+  `DefaultNotifier` sorts them itself. See [Interceptors](interceptors.md) for how to write one.
 - **`AdapterResolver`** selects the one adapter whose request type matches. Exactly one provider
   must be installed per channel; zero or more than one is a wiring error (`IllegalStateException`).
 - **`ChannelAdapter` / `SenderChannelAdapter`** invoke the provider's `NotificationSender` and
