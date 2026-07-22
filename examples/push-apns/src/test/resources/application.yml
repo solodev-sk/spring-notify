@@ -1,0 +1,20 @@
+spring:
+  notify:
+    push:
+      apns:
+        # Fully static test config: host/port point at the mock APNs server (MockApnsServerSupport
+        # binds the same fixed port), trusted-certificate makes the client trust the mock's fixed
+        # self-signed cert under certs/. The signing key is a throwaway EC P-256 key with no security
+        # value — the mock accepts all notifications and never verifies its signature.
+        host: localhost
+        port: 28443
+        trusted-certificate: classpath:certs/mock-apns.crt
+        key-id: ABCDE12345
+        team-id: TEAM123456
+        topic: com.example.app
+        signing-key: |
+          -----BEGIN PRIVATE KEY-----
+          MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgjMMgPLSu+LwwGffX
+          M30GZVdNPAR15zZOCSh3kLYV6nmhRANCAAR5Vr3EOE4grZKKPQ/E/Cm6Fw2H+83i
+          r4zYAAWjEQ10H+gq1R9wNvqGDxIKVhqprjW2q0A2zI0GKg0P7uvjt+aW
+          -----END PRIVATE KEY-----

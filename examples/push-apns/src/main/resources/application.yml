@@ -1,0 +1,8 @@
+spring:
+  notify:
+    push:
+      apns:
+        signing-key: ${APNS_SIGNING_KEY}
+        key-id: ${APNS_KEY_ID}
+        team-id: ${APNS_TEAM_ID}
+        topic: ${APNS_TOPIC}
