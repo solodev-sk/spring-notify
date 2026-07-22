@@ -21,7 +21,6 @@ class ApnsPushSenderTest {
     private final ApnsClient client = mock(ApnsClient.class);
     private final ApnsPushSender sender = new ApnsPushSender(client, "com.example.app");
 
-    @SuppressWarnings("unchecked")
     private void stubResponse(PushNotificationResponse<SimpleApnsPushNotification> response) {
         var future = new PushNotificationFuture<SimpleApnsPushNotification, PushNotificationResponse<SimpleApnsPushNotification>>(
                 mock(SimpleApnsPushNotification.class));

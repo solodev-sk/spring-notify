@@ -4,6 +4,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -15,6 +16,7 @@ import sk.solodev.notify.push.PushSender;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Clock;
 
 /**
  * Registers an FCM-backed {@link PushSender} when
@@ -47,7 +49,7 @@ public class FcmPushAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public PushSender fcmPushSender(FirebaseMessaging messaging) {
-        return new FcmPushSender(messaging);
+    public PushSender fcmPushSender(FirebaseMessaging messaging, ObjectProvider<Clock> clock) {
+        return new FcmPushSender(messaging, clock.getIfAvailable(Clock::systemDefaultZone));
     }
 }
