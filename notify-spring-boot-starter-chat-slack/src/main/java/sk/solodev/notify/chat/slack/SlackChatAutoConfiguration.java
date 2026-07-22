@@ -1,6 +1,7 @@
 package sk.solodev.notify.chat.slack;
 
 import com.slack.api.Slack;
+import com.slack.api.methods.MethodsClient;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -24,7 +25,13 @@ public class SlackChatAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public ChatSender slackChatSender(SlackProperties properties) {
-        return new SlackChatSender(Slack.getInstance().methods(properties.token()));
+    public MethodsClient slackMethodsClient(SlackProperties properties) {
+        return Slack.getInstance().methods(properties.token());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ChatSender slackChatSender(MethodsClient methodsClient) {
+        return new SlackChatSender(methodsClient);
     }
 }

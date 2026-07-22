@@ -135,6 +135,30 @@ spring:
         token: ${SLACK_BOT_TOKEN}   # xoxb-…
 ```
 
+## Configuring the provider SDK
+
+You have two options, and you pick per provider:
+
+1. **Zero-config (default)** — set the properties above and the starter builds the provider's SDK
+   client *and* the sender for you. You never touch the SDK.
+2. **Bring your own client** — if you need to configure the SDK yourself (custom HTTP client,
+   timeouts, proxy, region), just declare the SDK client as a bean. The starter's client bean is
+   `@ConditionalOnMissingBean`, so it backs off and wires its sender around yours:
+
+```java
+@Bean
+TwilioRestClient twilioRestClient() {
+    return new TwilioRestClient.Builder(sid, token)
+            .region("ie1")            // your own configuration
+            .build();
+}
+// the Twilio starter skips its own client and builds TwilioSmsSender around this one
+```
+
+Each starter exposes its client as a bean you can override this way:
+`TwilioRestClient`, Vonage `SmsClient`, `JavaMailSender` (SMTP), `SendGrid`, `FirebaseMessaging`
+(FCM), `ApnsClient`, and Slack `MethodsClient`.
+
 ## Bringing your own provider
 
 Not using a bundled provider? Depend on the **channel** module instead of a provider starter and
