@@ -1,0 +1,6 @@
+spring:
+  notify:
+    email:
+      smtp:
+        host: ${SMTP_HOST}
+        port: ${SMTP_PORT}
