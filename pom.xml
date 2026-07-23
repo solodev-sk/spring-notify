@@ -16,6 +16,29 @@
     <packaging>pom</packaging>
     <name>spring-notify :: parent</name>
     <description>Channel-agnostic notification delivery framework for Spring Boot</description>
+    <url>https://github.com/solodev-sk/spring-notify</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Dominik Kovács</name>
+            <email>dominik.kovacs28@gmail.com</email>
+            <organization>solodev</organization>
+            <organizationUrl>https://github.com/solodev-sk</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/solodev-sk/spring-notify.git</connection>
+        <developerConnection>scm:git:git@github.com:solodev-sk/spring-notify.git</developerConnection>
+        <url>https://github.com/solodev-sk/spring-notify</url>
+    </scm>
 
     <properties>
         <java.version>25</java.version>
@@ -29,6 +52,8 @@
         <pushy.version>0.15.4</pushy.version>
         <sendgrid.version>4.10.3</sendgrid.version>
         <vonage.version>8.11.0</vonage.version>
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
+        <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
     </properties>
 
     <modules>
@@ -133,4 +158,65 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <!-- Activated by the release workflow (mvn -P release deploy). Attaches sources + javadoc,
+         signs every artifact with GPG, and uploads the bundle to the Central Portal. -->
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadoc</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven-gpg-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>${central-publishing-maven-plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <!-- Upload, validate, and release to Maven Central automatically. -->
+                            <autoPublish>true</autoPublish>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
