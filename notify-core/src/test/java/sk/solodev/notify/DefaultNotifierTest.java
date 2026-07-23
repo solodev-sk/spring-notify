@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -113,7 +114,10 @@ class DefaultNotifierTest {
                 new DefaultAdapterResolver(), List.of(), decoratingExecutor);
 
         svc.notifyAsync(request).get();
+        // notifyAsync completes inside task.run(), before the decorator appends "after" on the
+        // pool thread — await termination so that write has happened (and is visible) before asserting.
         pool.shutdown();
+        assertThat(pool.awaitTermination(5, TimeUnit.SECONDS)).isTrue();
 
         assertThat(decoratedAround).containsExactly("before", "after");
     }
