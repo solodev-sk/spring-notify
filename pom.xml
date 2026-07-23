@@ -195,13 +195,11 @@
                         <artifactId>maven-gpg-plugin</artifactId>
                         <version>${maven-gpg-plugin.version}</version>
                         <configuration>
-                            <!-- CI signs headlessly: feed the passphrase via loopback rather than a
-                                 pinentry dialog. setup-java's gpg-passphrase input exposes it as the
-                                 MAVEN_GPG_PASSPHRASE env var, which the plugin reads. -->
-                            <gpgArguments>
-                                <arg>--pinentry-mode</arg>
-                                <arg>loopback</arg>
-                            </gpgArguments>
+                            <!-- Sign with the pure-Java BouncyCastle signer, not the gpg binary:
+                                 headless CI has no gpg-agent/pinentry, which the gpg signer requires.
+                                 The bc signer reads the armored key and passphrase from the
+                                 MAVEN_GPG_KEY and MAVEN_GPG_PASSPHRASE env vars set on the deploy step. -->
+                            <signer>bc</signer>
                         </configuration>
                         <executions>
                             <execution>
