@@ -1,19 +1,11 @@
 # Getting started
 
-## 1. Build it locally
+spring-notify is on Maven Central — just add the dependencies.
 
-spring-notify is not yet on Maven Central. Build it into your local `~/.m2`:
+## 1. Import the BOM (recommended)
 
-```bash
-git clone https://github.com/solodev-sk/spring-notify.git
-cd spring-notify
-./mvnw install
-```
-
-## 2. Import the BOM (recommended)
-
-If you depend on more than one `notify-*` artifact, import the BOM once so every module resolves
-to the same version and you can omit `<version>` everywhere:
+Import the BOM once so every `notify-*` module resolves to the same version and you can omit
+`<version>` on the individual artifacts:
 
 ```xml
 <dependencyManagement>
@@ -21,7 +13,7 @@ to the same version and you can omit `<version>` everywhere:
         <dependency>
             <groupId>sk.solodev</groupId>
             <artifactId>notify-bom</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -29,7 +21,7 @@ to the same version and you can omit `<version>` everywhere:
 </dependencyManagement>
 ```
 
-## 3. Add a provider starter
+## 2. Add a provider starter
 
 Pick the backend you want. The starter pulls in the channel and the whole pipeline transitively:
 
@@ -40,7 +32,7 @@ Pick the backend you want. The starter pulls in the channel and the whole pipeli
 </dependency>
 ```
 
-## 4. Configure it
+## 3. Configure it
 
 ```yaml
 spring:
@@ -53,7 +45,7 @@ spring:
 
 Config keys autocomplete in your IDE — every provider's keys ship with generated metadata.
 
-## 5. Inject `Notifier` and send
+## 4. Inject `Notifier` and send
 
 ```java
 @Service
