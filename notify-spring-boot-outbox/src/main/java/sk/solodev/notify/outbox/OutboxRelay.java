@@ -1,0 +1,88 @@
+package sk.solodev.notify.outbox;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sk.solodev.notify.NotificationRequest;
+import sk.solodev.notify.Notifier;
+
+import java.time.Duration;
+import java.time.Instant;
+
+/**
+ * Polls the {@link OutboxStore} for due {@code PENDING} entries and delivers each through the
+ * application's {@link Notifier} — so interceptors, events, and observations all apply at real
+ * delivery time. A failed delivery is retried with capped exponential backoff until
+ * {@code maxAttempts}, after which the entry is marked {@code FAILED}.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.1
+ */
+public class OutboxRelay {
+
+    private static final Logger log = LoggerFactory.getLogger(OutboxRelay.class);
+
+    private final Notifier notifier;
+
+    private final OutboxStore store;
+
+    private final ObjectMapper objectMapper;
+
+    private final OutboxProperties properties;
+
+    public OutboxRelay(Notifier notifier, OutboxStore store, ObjectMapper objectMapper,
+                       OutboxProperties properties) {
+        this.notifier = notifier;
+        this.store = store;
+        this.objectMapper = objectMapper;
+        this.properties = properties;
+    }
+
+    /** Claim a batch of due entries and attempt delivery of each. */
+    public void poll() {
+        var now = Instant.now();
+        var batch = store.claimBatch(properties.batchSize(), now);
+        for (var entry : batch) {
+            deliver(entry);
+        }
+    }
+
+    private void deliver(OutboxEntry entry) {
+        NotificationRequest request;
+        try {
+            request = (NotificationRequest) objectMapper.readValue(
+                    entry.payload(), Class.forName(entry.requestType()));
+        } catch (ClassNotFoundException | ClassCastException | JsonProcessingException ex) {
+            log.error("Outbox entry {} has an undeserializable payload of type {}; marking failed",
+                    entry.id(), entry.requestType(), ex);
+            store.markFailed(entry.id(), ex.getMessage());
+            return;
+        }
+
+        try {
+            var messageId = notifier.notify(request);
+            store.markSent(entry.id(), messageId, Instant.now());
+        } catch (RuntimeException ex) {
+            var nextAttempts = entry.attempts() + 1;
+            if (nextAttempts >= entry.maxAttempts()) {
+                log.warn("Outbox entry {} failed on final attempt {}/{}: {}",
+                        entry.id(), nextAttempts, entry.maxAttempts(), ex.getMessage());
+                store.markFailed(entry.id(), ex.getMessage());
+            } else {
+                var next = Instant.now().plus(backoff(nextAttempts));
+                log.debug("Outbox entry {} failed (attempt {}/{}), retrying at {}",
+                        entry.id(), nextAttempts, entry.maxAttempts(), next);
+                store.markForRetry(entry.id(), ex.getMessage(), next);
+            }
+        }
+    }
+
+    /** Exponential backoff (doubling from initial), capped at maxBackoff. attemptsSoFar >= 1. */
+    Duration backoff(int attemptsSoFar) {
+        var initialMillis = properties.initialBackoff().toMillis();
+        var maxMillis = properties.maxBackoff().toMillis();
+        var scaled = initialMillis * (1L << Math.min(attemptsSoFar - 1, 30));
+        return Duration.ofMillis(Math.min(scaled, maxMillis));
+    }
+}
