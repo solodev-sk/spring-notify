@@ -17,13 +17,12 @@ jobs:
           distribution: temurin
           java-version: '25'
           cache: maven
-          # Writes ~/.m2/settings.xml with a `central` server whose credentials come from these
-          # env vars, and imports the GPG signing key used by the release profile.
+          # Writes ~/.m2/settings.xml with a `central` server whose credentials come from the
+          # CENTRAL_USERNAME/PASSWORD env vars on the publish step. (Signing is handled by the bc
+          # signer reading MAVEN_GPG_KEY directly, so no gpg-private-key import is needed here.)
           server-id: central
           server-username: CENTRAL_USERNAME
           server-password: CENTRAL_PASSWORD
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: GPG_PASSPHRASE
 
       # Derive the release version (strip -SNAPSHOT) and the next dev version (bump patch).
       # e.g. 1.0.0-SNAPSHOT -> release 1.0.0 -> next 1.0.1-SNAPSHOT
