@@ -38,15 +38,16 @@ jobs:
           echo "next=$NEXT" >> "$GITHUB_OUTPUT"
           echo "Releasing $RELEASE, next dev version $NEXT"
 
-      # Set the fixed release version across the reactor (parent + all modules) and the
-      # standalone examples' spring-notify.version property, so the E2E gate resolves it.
+      # Set the fixed release version across the reactor (parent + all modules), then point the
+      # standalone examples' spring-notify.version property at it so the E2E gate resolves it.
+      # The examples are edited with sed, not Maven: versions:set-property would need to build the
+      # example's model, which imports notify-bom at its *current* version — not yet installed —
+      # so Maven can't parse the POM it is meant to edit. sed sidesteps that chicken-and-egg.
       - name: Set release version
         run: |
           ./mvnw -B -q versions:set -DnewVersion=${{ steps.versions.outputs.release }} -DgenerateBackupPoms=false
           for pom in examples/*/pom.xml; do
-            ./mvnw -B -q versions:set-property -f "$pom" \
-              -Dproperty=spring-notify.version \
-              -DnewVersion=${{ steps.versions.outputs.release }} -DgenerateBackupPoms=false
+            sed -i "s|<spring-notify.version>.*</spring-notify.version>|<spring-notify.version>${{ steps.versions.outputs.release }}</spring-notify.version>|" "$pom"
           done
 
       # Install the fixed-version library into ~/.m2 so the standalone examples can resolve it.
@@ -87,9 +88,7 @@ jobs:
 
           ./mvnw -B -q versions:set -DnewVersion=${{ steps.versions.outputs.next }} -DgenerateBackupPoms=false
           for pom in examples/*/pom.xml; do
-            ./mvnw -B -q versions:set-property -f "$pom" \
-              -Dproperty=spring-notify.version \
-              -DnewVersion=${{ steps.versions.outputs.next }} -DgenerateBackupPoms=false
+            sed -i "s|<spring-notify.version>.*</spring-notify.version>|<spring-notify.version>${{ steps.versions.outputs.next }}</spring-notify.version>|" "$pom"
           done
           git commit -am "Start next development iteration ${{ steps.versions.outputs.next }}"
 
