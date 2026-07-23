@@ -94,3 +94,12 @@ jobs:
           git commit -am "Start next development iteration ${{ steps.versions.outputs.next }}"
 
           git push origin HEAD "v${{ steps.versions.outputs.release }}"
+
+      # Publish a GitHub Release for the tag, with notes auto-generated from merged PRs/commits.
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${{ steps.versions.outputs.release }}" \
+            --title "v${{ steps.versions.outputs.release }}" \
+            --generate-notes
