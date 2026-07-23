@@ -65,6 +65,7 @@
         <module>notify-spring-boot-chat</module>
         <module>notify-spring-boot-autoconfigure</module>
         <module>notify-test</module>
+        <module>notify-spring-boot-outbox</module>
         <module>notify-spring-boot-starter-sms-twilio</module>
         <module>notify-spring-boot-starter-sms-vonage</module>
         <module>notify-spring-boot-starter-push-fcm</module>
@@ -109,6 +110,11 @@
             <dependency>
                 <groupId>sk.solodev</groupId>
                 <artifactId>notify-test</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sk.solodev</groupId>
+                <artifactId>notify-spring-boot-outbox</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -1,0 +1,19 @@
+package sk.solodev.notify.outbox;
+
+import org.jspecify.annotations.Nullable;
+
+import java.time.Instant;
+import java.util.UUID;
+
+/**
+ * One persisted notification awaiting or completing durable delivery — mirrors a row of the
+ * {@code notification_outbox} table.
+ *
+ * @author Dominik Kovács
+ * @since 1.0.1
+ */
+public record OutboxEntry(UUID id, String requestType, String payload, OutboxStatus status,
+                          int attempts, int maxAttempts, @Nullable String messageId,
+                          @Nullable String lastError, Instant createdAt, Instant nextAttemptAt,
+                          @Nullable Instant sentAt) {
+}

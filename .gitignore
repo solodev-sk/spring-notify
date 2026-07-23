@@ -12,3 +12,7 @@ docs/superpowers/
 
 # private working notes (pitch, plan, design, handoff)
 .notes/
+
+# local-only Maven settings (mirror workaround); never committed — breaks release deploy
+.mvn/settings.xml
+.mvn/maven.config

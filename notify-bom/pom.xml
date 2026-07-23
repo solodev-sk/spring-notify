@@ -52,6 +52,11 @@
             </dependency>
             <dependency>
                 <groupId>sk.solodev</groupId>
+                <artifactId>notify-spring-boot-outbox</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>sk.solodev</groupId>
                 <artifactId>notify-spring-boot-starter-sms-twilio</artifactId>
                 <version>${project.version}</version>
             </dependency>
