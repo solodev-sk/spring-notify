@@ -12,8 +12,8 @@ notifier.notify(SmsRequest.builder()
         .build());
 ```
 
-> Status: `1.0.0-SNAPSHOT` · Java 25 · Spring Boot 4.1 · no runtime dependencies beyond
-> Spring and the provider SDK you choose.
+> Latest release: `1.0.0` (on Maven Central) · Java 25 · Spring Boot 4.1 · no runtime
+> dependencies beyond Spring and the provider SDK you choose.
 
 📖 **Full documentation lives in [`docs/`](docs/index.md).** This page is the overview.
 
@@ -38,23 +38,17 @@ spring-notify puts a thin, provider-neutral layer in front:
 
 ## Quick start
 
-**1. Build it locally** (not yet on Maven Central):
-
-```bash
-git clone <repo> && cd spring-notify && ./mvnw install
-```
-
-**2. Add a provider starter** — it pulls in the channel and pipeline transitively:
+**1. Add a provider starter** — it pulls in the channel and pipeline transitively:
 
 ```xml
 <dependency>
     <groupId>sk.solodev</groupId>
     <artifactId>notify-spring-boot-starter-sms-twilio</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
-**3. Configure it** (`application.yml`) — keys autocomplete in your IDE:
+**2. Configure it** (`application.yml`) — keys autocomplete in your IDE:
 
 ```yaml
 spring:
@@ -65,7 +59,7 @@ spring:
         auth-token: ${TWILIO_AUTH_TOKEN}
 ```
 
-**4. Inject `Notifier` and send:**
+**3. Inject `Notifier` and send:**
 
 ```java
 String messageId = notifier.notify(SmsRequest.builder()
@@ -84,12 +78,12 @@ the failed request) on failure. Use `notifyAsync(...)` to send off the calling t
 
 ## Channels & providers
 
-| Channel | Request | Provider starters |
-|---------|---------|-------------------|
-| SMS   | `SmsRequest`   | `…-sms-twilio`, `…-sms-vonage` |
-| Push  | `PushRequest`  | `…-push-fcm`, `…-push-apns` |
-| Email | `EmailRequest` | `…-email-smtp`, `…-email-sendgrid` |
-| Chat  | `ChatRequest`  | `…-chat-slack` |
+| Channel | Request        | Provider starters                  |
+|---------|----------------|------------------------------------|
+| SMS     | `SmsRequest`   | `…-sms-twilio`, `…-sms-vonage`     |
+| Push    | `PushRequest`  | `…-push-fcm`, `…-push-apns`        |
+| Email   | `EmailRequest` | `…-email-smtp`, `…-email-sendgrid` |
+| Chat    | `ChatRequest`  | `…-chat-slack`                     |
 
 **Providers are interchangeable.** Each channel takes the same request whichever backend you
 install — you pick it with a dependency, not a code change. Your app code never mentions Twilio,
@@ -144,7 +138,6 @@ You depend on a provider starter; everything below it comes transitively.
 ## What's next
 
 - More providers per channel — SMS (AWS SNS), email (SES), chat (Discord).
-- Publishing to Maven Central.
 
 Contributions and provider requests welcome.
 
