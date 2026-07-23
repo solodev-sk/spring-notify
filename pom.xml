@@ -12,7 +12,7 @@
 
     <groupId>sk.solodev</groupId>
     <artifactId>spring-notify-parent</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>spring-notify :: parent</name>
     <description>Channel-agnostic notification delivery framework for Spring Boot</description>

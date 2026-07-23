@@ -5,7 +5,7 @@
     <parent>
         <groupId>sk.solodev</groupId>
         <artifactId>spring-notify-parent</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>notify-spring-boot-starter-push-fcm</artifactId>
