@@ -90,7 +90,7 @@ class OutboxEmailTest {
 
         try {
             orderService.placeOrder(order, true);
-        } catch (IllegalStateException expected) {
+        } catch (IllegalStateException _) {
             // Expected: the service throws to trigger rollback
         }
 
