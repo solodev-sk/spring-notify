@@ -1,5 +1,8 @@
 package sk.solodev.notify.outbox;
 
+import io.micrometer.tracing.Tracer;
+import io.micrometer.tracing.propagation.Propagator;
+import io.micrometer.tracing.test.simple.SimpleTracer;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
@@ -59,6 +62,20 @@ class OutboxAutoConfigurationTest {
         }
     }
 
+    @Configuration
+    static class TracingConfig {
+
+        @Bean
+        Tracer tracer() {
+            return new SimpleTracer();
+        }
+
+        @Bean
+        Propagator propagator() {
+            return Propagator.NOOP;
+        }
+    }
+
     private final ApplicationContextRunner runner = new ApplicationContextRunner()
             .withConfiguration(AutoConfigurations.of(DataSourceAutoConfiguration.class,
                     OutboxAutoConfiguration.class))
@@ -107,5 +124,18 @@ class OutboxAutoConfigurationTest {
                 .withConfiguration(AutoConfigurations.of(OutboxAutoConfiguration.class))
                 .withUserConfiguration(StubNotifierConfig.class)
                 .run(context -> assertThat(context).doesNotHaveBean(OutboxNotifier.class));
+    }
+
+    @Test
+    void usesTheNoOpPropagatorWhenTracingIsNotConfigured() {
+        runner.run(context -> assertThat(context.getBean(OutboxTracePropagator.class))
+                .isInstanceOf(NoOpOutboxTracePropagator.class));
+    }
+
+    @Test
+    void usesRealTracePropagationWhenATracerIsConfigured() {
+        runner.withUserConfiguration(TracingConfig.class)
+                .run(context -> assertThat(context.getBean(OutboxTracePropagator.class))
+                        .isInstanceOf(MicrometerOutboxTracePropagator.class));
     }
 }

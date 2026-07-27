@@ -1,11 +1,15 @@
 package sk.solodev.notify.outbox;
 
+import io.micrometer.tracing.Tracer;
+import io.micrometer.tracing.propagation.Propagator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -47,6 +51,19 @@ public class OutboxAutoConfiguration {
                                    JsonMapper jsonMapper, OutboxProperties properties,
                                    OutboxTracePropagator tracePropagator) {
         return new OutboxRelay(notifier, store, jsonMapper, properties, tracePropagator);
+    }
+
+    /** Replaces the no-op propagator with real trace propagation when tracing is configured. */
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnClass(Tracer.class)
+    @ConditionalOnBean({Tracer.class, Propagator.class})
+    static class TracingConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean
+        public OutboxTracePropagator outboxTracePropagator(Tracer tracer, Propagator propagator) {
+            return new MicrometerOutboxTracePropagator(tracer, propagator);
+        }
     }
 
     @Bean
