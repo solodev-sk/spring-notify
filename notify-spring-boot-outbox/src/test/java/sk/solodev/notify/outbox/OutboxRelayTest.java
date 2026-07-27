@@ -9,8 +9,11 @@ import tools.jackson.databind.json.JsonMapper;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -46,7 +49,7 @@ class OutboxRelayTest {
     }
 
     private static OutboxRelay relay(Notifier notifier, OutboxStore store) {
-        return new OutboxRelay(notifier, store, JSON, PROPERTIES);
+        return new OutboxRelay(notifier, store, JSON, PROPERTIES, new NoOpOutboxTracePropagator());
     }
 
     @Test
@@ -173,6 +176,33 @@ class OutboxRelayTest {
         assertThat(relay.backoff(3)).isEqualTo(Duration.ofSeconds(40));
         // capped at maxBackoff (10m)
         assertThat(relay.backoff(30)).isEqualTo(Duration.ofMinutes(10));
+    }
+
+    @Test
+    void restoresTheStoredTraceContextAroundTheDelivery() {
+        var seen = new ArrayList<String>();
+        var propagator = new OutboxTracePropagator() {
+
+            @Override
+            public Optional<String> capture() {
+                return Optional.empty();
+            }
+
+            @Override
+            public <T> T withRestoredContext(String traceContext, Supplier<T> delivery) {
+                seen.add(traceContext);
+                return delivery.get();
+            }
+        };
+        var entry = new OutboxEntry(UUID.randomUUID(), SampleRequest.class.getName(),
+                JSON.writeValueAsString(new SampleRequest("+421900123456")), OutboxStatus.PENDING,
+                0, 3, null, null, Instant.now(), Instant.now(), null, "stored-context");
+        var store = new RecordingOutboxStore(entry);
+
+        new OutboxRelay(notifier(), store, JSON, PROPERTIES, propagator).poll();
+
+        assertThat(seen).containsExactly("stored-context");
+        assertThat(store.outcome).isEqualTo("sent");
     }
 
     private static NotificationDeliveryException deliveryFailure() {

@@ -31,12 +31,15 @@ public class OutboxRelay {
 
     private final OutboxProperties properties;
 
+    private final OutboxTracePropagator tracePropagator;
+
     public OutboxRelay(Notifier notifier, OutboxStore store, JsonMapper jsonMapper,
-                       OutboxProperties properties) {
+                       OutboxProperties properties, OutboxTracePropagator tracePropagator) {
         this.notifier = notifier;
         this.store = store;
         this.jsonMapper = jsonMapper;
         this.properties = properties;
+        this.tracePropagator = tracePropagator;
     }
 
     /**
@@ -69,7 +72,8 @@ public class OutboxRelay {
         }
 
         try {
-            var messageId = notifier.notify(request);
+            var messageId = tracePropagator.withRestoredContext(entry.traceContext(),
+                    () -> notifier.notify(request));
             store.markSent(entry.id(), messageId, Instant.now());
         } catch (RuntimeException ex) {
             var nextAttempts = entry.attempts() + 1;

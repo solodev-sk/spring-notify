@@ -22,10 +22,14 @@ public class DefaultOutboxNotifier implements OutboxNotifier {
 
     private final OutboxProperties properties;
 
-    public DefaultOutboxNotifier(OutboxStore store, JsonMapper jsonMapper, OutboxProperties properties) {
+    private final OutboxTracePropagator tracePropagator;
+
+    public DefaultOutboxNotifier(OutboxStore store, JsonMapper jsonMapper, OutboxProperties properties,
+                                 OutboxTracePropagator tracePropagator) {
         this.store = store;
         this.jsonMapper = jsonMapper;
         this.properties = properties;
+        this.tracePropagator = tracePropagator;
     }
 
     @Override
@@ -34,7 +38,8 @@ public class DefaultOutboxNotifier implements OutboxNotifier {
         var now = Instant.now();
         var entry = new OutboxEntry(id, request.getClass().getName(),
                 jsonMapper.writeValueAsString(request), OutboxStatus.PENDING, 0,
-                properties.maxAttempts(), null, null, now, now, null, null);
+                properties.maxAttempts(), null, null, now, now, null,
+                tracePropagator.capture().orElse(null));
         store.insert(entry);
         return id;
     }

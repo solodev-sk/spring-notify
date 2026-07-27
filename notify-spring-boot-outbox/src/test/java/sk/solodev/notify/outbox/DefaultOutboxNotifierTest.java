@@ -8,7 +8,9 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,7 +25,8 @@ class DefaultOutboxNotifierTest {
     private final RecordingOutboxStore store = new RecordingOutboxStore();
 
     private final DefaultOutboxNotifier notifier =
-            new DefaultOutboxNotifier(store, JsonMapper.builder().build(), PROPERTIES);
+            new DefaultOutboxNotifier(store, JsonMapper.builder().build(), PROPERTIES,
+                    new NoOpOutboxTracePropagator());
 
     @Test
     void persistsThePendingEntryAndReturnsItsId() {
@@ -81,5 +84,28 @@ class DefaultOutboxNotifierTest {
 
         assertThat(first).isNotEqualTo(second);
         assertThat(store.inserted).hasSize(2);
+    }
+
+    @Test
+    void storesTheTraceContextCapturedAtEnqueue() {
+        var propagator = new OutboxTracePropagator() {
+
+            @Override
+            public Optional<String> capture() {
+                return Optional.of("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
+            }
+
+            @Override
+            public <T> T withRestoredContext(String traceContext, Supplier<T> delivery) {
+                return delivery.get();
+            }
+        };
+        var tracing = new DefaultOutboxNotifier(store, JsonMapper.builder().build(), PROPERTIES,
+                propagator);
+
+        tracing.enqueue(new SampleRequest("+421900123456", "hello"));
+
+        assertThat(store.inserted.getFirst().traceContext())
+                .isEqualTo("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
     }
 }

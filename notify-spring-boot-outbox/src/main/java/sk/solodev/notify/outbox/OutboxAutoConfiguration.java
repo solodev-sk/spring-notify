@@ -36,15 +36,23 @@ public class OutboxAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public OutboxNotifier outboxNotifier(OutboxStore store, JsonMapper jsonMapper,
-                                         OutboxProperties properties) {
-        return new DefaultOutboxNotifier(store, jsonMapper, properties);
+                                         OutboxProperties properties,
+                                         OutboxTracePropagator tracePropagator) {
+        return new DefaultOutboxNotifier(store, jsonMapper, properties, tracePropagator);
     }
 
     @Bean
     @ConditionalOnMissingBean
     public OutboxRelay outboxRelay(Notifier notifier, OutboxStore store,
-                                   JsonMapper jsonMapper, OutboxProperties properties) {
-        return new OutboxRelay(notifier, store, jsonMapper, properties);
+                                   JsonMapper jsonMapper, OutboxProperties properties,
+                                   OutboxTracePropagator tracePropagator) {
+        return new OutboxRelay(notifier, store, jsonMapper, properties, tracePropagator);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public OutboxTracePropagator outboxTracePropagator() {
+        return new NoOpOutboxTracePropagator();
     }
 
     /**
