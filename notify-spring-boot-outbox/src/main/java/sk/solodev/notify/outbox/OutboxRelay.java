@@ -17,7 +17,7 @@ import java.time.Instant;
  * {@code maxAttempts}, after which the entry is marked {@code FAILED}.
  *
  * @author Dominik Kovács
- * @since 1.0.1
+ * @since 1.1.0
  */
 public class OutboxRelay {
 

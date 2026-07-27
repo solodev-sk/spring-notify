@@ -10,7 +10,7 @@ import java.util.UUID;
  * {@code notification_outbox} table.
  *
  * @author Dominik Kovács
- * @since 1.0.1
+ * @since 1.1.0
  */
 public record OutboxEntry(UUID id, String requestType, String payload, OutboxStatus status,
                           int attempts, int maxAttempts, @Nullable String messageId,

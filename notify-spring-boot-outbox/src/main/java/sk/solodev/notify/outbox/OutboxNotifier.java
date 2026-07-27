@@ -12,7 +12,7 @@ import java.util.UUID;
  * {@code NotificationSent}/{@code NotificationFailed} event.
  *
  * @author Dominik Kovács
- * @since 1.0.1
+ * @since 1.1.0
  */
 public interface OutboxNotifier {
 

@@ -12,7 +12,7 @@ import java.util.UUID;
  * their business change.
  *
  * @author Dominik Kovács
- * @since 1.0.1
+ * @since 1.1.0
  */
 public class DefaultOutboxNotifier implements OutboxNotifier {
 

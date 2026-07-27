@@ -15,7 +15,7 @@ import java.time.Duration;
  * @param tableName      the outbox table name (default notification_outbox)
  *
  * @author Dominik Kovács
- * @since 1.0.1
+ * @since 1.1.0
  */
 @ConfigurationProperties("spring.notify.outbox")
 public record OutboxProperties(Duration pollInterval, int batchSize, int maxAttempts,

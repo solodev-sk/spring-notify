@@ -15,7 +15,7 @@ import java.util.UUID;
  * concurrent relays never claim the same row.
  *
  * @author Dominik Kovács
- * @since 1.0.1
+ * @since 1.1.0
  */
 public class JdbcOutboxStore implements OutboxStore {
 

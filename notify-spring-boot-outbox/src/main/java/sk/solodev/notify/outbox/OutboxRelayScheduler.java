@@ -12,7 +12,7 @@ import java.util.concurrent.ScheduledFuture;
  * using the interval from {@link OutboxProperties}.
  *
  * @author Dominik Kovács
- * @since 1.0.1
+ * @since 1.1.0
  */
 public class OutboxRelayScheduler implements SmartLifecycle {
 

@@ -1,9 +1,9 @@
 package com.example.outbox;
 
-import org.jspecify.annotations.Nullable;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -27,7 +27,7 @@ class OrderRepository {
                 .update();
     }
 
-    @Nullable Order findById(UUID id) {
+    Optional<Order> findById(UUID id) {
         return jdbc.sql("SELECT id, customer_email, product_name, amount FROM orders WHERE id = :id")
                 .param("id", id)
                 .query((rs, rowNum) -> new Order(
@@ -36,7 +36,6 @@ class OrderRepository {
                         rs.getString("product_name"),
                         rs.getBigDecimal("amount")
                 ))
-                .optional()
-                .orElse(null);
+                .optional();
     }
 }

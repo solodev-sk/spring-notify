@@ -9,7 +9,7 @@ import java.util.UUID;
  * shared {@code DataSource}; applications may supply their own implementation.
  *
  * @author Dominik Kovács
- * @since 1.0.1
+ * @since 1.1.0
  */
 public interface OutboxStore {
 

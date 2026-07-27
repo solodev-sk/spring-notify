@@ -4,7 +4,7 @@ package sk.solodev.notify.outbox;
  * Lifecycle state of an outbox entry.
  *
  * @author Dominik Kovács
- * @since 1.0.1
+ * @since 1.1.0
  */
 public enum OutboxStatus {
 

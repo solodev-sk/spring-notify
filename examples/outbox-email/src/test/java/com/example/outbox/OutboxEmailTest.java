@@ -71,7 +71,7 @@ class OutboxEmailTest {
 
         orderService.placeOrder(order, false);
 
-        assertThat(orderRepository.findById(orderId)).isNotNull();
+        assertThat(orderRepository.findById(orderId)).contains(order);
 
         var subject = "Order confirmation: Widget";
         var messageId = awaitMessageId(subject);
@@ -94,7 +94,7 @@ class OutboxEmailTest {
             // Expected: the service throws to trigger rollback
         }
 
-        assertThat(orderRepository.findById(orderId)).isNull();
+        assertThat(orderRepository.findById(orderId)).isEmpty();
 
         var outboxCount = jdbcClient.sql("SELECT COUNT(*) FROM notification_outbox WHERE id = :orderId")
                 .param("orderId", orderId)
