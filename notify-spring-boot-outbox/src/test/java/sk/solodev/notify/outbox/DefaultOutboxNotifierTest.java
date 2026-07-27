@@ -16,30 +16,6 @@ class DefaultOutboxNotifierTest {
 
     record SampleRequest(String to, String body) implements NotificationRequest { }
 
-    static class RecordingOutboxStore implements OutboxStore {
-
-        final List<OutboxEntry> inserted = new ArrayList<>();
-
-        @Override
-        public void insert(OutboxEntry entry) {
-            inserted.add(entry);
-        }
-
-        @Override
-        public List<OutboxEntry> claimBatch(int batchSize, Instant now) {
-            return List.of();
-        }
-
-        @Override
-        public void markSent(UUID id, String messageId, Instant sentAt) { }
-
-        @Override
-        public void markForRetry(UUID id, String lastError, Instant nextAttemptAt) { }
-
-        @Override
-        public void markFailed(UUID id, String lastError) { }
-    }
-
     private static final OutboxProperties PROPERTIES = new OutboxProperties(
             Duration.ofSeconds(5), 100, 7, Duration.ofSeconds(10), Duration.ofMinutes(10),
             "notification_outbox");

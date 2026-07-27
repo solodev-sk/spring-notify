@@ -25,49 +25,6 @@ class OutboxRelayTest {
             Duration.ofSeconds(5), 100, 3, Duration.ofSeconds(10), Duration.ofMinutes(10),
             "notification_outbox");
 
-    /** Serves a fixed batch once, then nothing; records every terminal transition. */
-    static class FakeStore implements OutboxStore {
-
-        private List<OutboxEntry> pending;
-
-        String outcome;
-        String lastError;
-        Instant nextAttemptAt;
-        String messageId;
-
-        FakeStore(OutboxEntry... entries) {
-            this.pending = List.of(entries);
-        }
-
-        @Override
-        public void insert(OutboxEntry entry) { }
-
-        @Override
-        public List<OutboxEntry> claimBatch(int batchSize, Instant now) {
-            var batch = pending;
-            pending = List.of();
-            return batch;
-        }
-
-        @Override
-        public void markSent(UUID id, String messageId, Instant sentAt) {
-            this.outcome = "sent";
-            this.messageId = messageId;
-        }
-
-        @Override
-        public void markForRetry(UUID id, String lastError, Instant nextAttemptAt) {
-            this.outcome = "retry";
-            this.lastError = lastError;
-            this.nextAttemptAt = nextAttemptAt;
-        }
-
-        @Override
-        public void markFailed(UUID id, String lastError) {
-            this.outcome = "failed";
-            this.lastError = lastError;
-        }
-    }
 
     private static RecordingNotifier notifier() {
         return new RecordingNotifier().returning("PROVIDER-MID");
@@ -94,7 +51,7 @@ class OutboxRelayTest {
 
     @Test
     void deliversThePendingEntryThroughTheNotifier() {
-        var store = new FakeStore(pending(0));
+        var store = new RecordingOutboxStore(pending(0));
         var notifier = notifier();
 
         relay(notifier, store).poll();
@@ -107,7 +64,7 @@ class OutboxRelayTest {
 
     @Test
     void recordsTheProviderMessageIdOnSuccess() {
-        var store = new FakeStore(pending(0));
+        var store = new RecordingOutboxStore(pending(0));
 
         relay(notifier(), store).poll();
 
@@ -117,7 +74,7 @@ class OutboxRelayTest {
 
     @Test
     void schedulesARetryWhenAttemptsRemain() {
-        var store = new FakeStore(pending(0));
+        var store = new RecordingOutboxStore(pending(0));
         var notifier = failingNotifier();
         var before = Instant.now();
 
@@ -132,7 +89,7 @@ class OutboxRelayTest {
     @Test
     void abandonsTheEntryOnTheFinalAttempt() {
         // attempts=2, maxAttempts=3 → this failure is the last one
-        var store = new FakeStore(pending(2));
+        var store = new RecordingOutboxStore(pending(2));
 
         relay(failingNotifier(), store).poll();
 
@@ -141,7 +98,7 @@ class OutboxRelayTest {
 
     @Test
     void abandonsAnEntryWhoseRequestTypeNoLongerExists() {
-        var store = new FakeStore(entry(0, "com.example.Removed", "{}"));
+        var store = new RecordingOutboxStore(entry(0, "com.example.Removed", "{}"));
         var notifier = notifier();
 
         relay(notifier, store).poll();
@@ -152,7 +109,7 @@ class OutboxRelayTest {
 
     @Test
     void abandonsAnEntryWithAMalformedPayloadInsteadOfBlockingTheBatch() {
-        var store = new FakeStore(entry(0, SampleRequest.class.getName(), "not json"));
+        var store = new RecordingOutboxStore(entry(0, SampleRequest.class.getName(), "not json"));
         var notifier = notifier();
 
         relay(notifier, store).poll();
@@ -163,7 +120,7 @@ class OutboxRelayTest {
 
     @Test
     void deliversEveryEntryInTheBatch() {
-        var store = new FakeStore(pending(0), pending(0), pending(0));
+        var store = new RecordingOutboxStore(pending(0), pending(0), pending(0));
         var notifier = notifier();
 
         relay(notifier, store).poll();
@@ -173,7 +130,7 @@ class OutboxRelayTest {
 
     @Test
     void doesNothingWhenThereIsNoWork() {
-        var store = new FakeStore();
+        var store = new RecordingOutboxStore();
         var notifier = notifier();
 
         relay(notifier, store).poll();
@@ -209,7 +166,7 @@ class OutboxRelayTest {
 
     @Test
     void backoffGrowsExponentiallyAndIsCapped() {
-        var relay = relay(notifier(), new FakeStore());
+        var relay = relay(notifier(), new RecordingOutboxStore());
 
         assertThat(relay.backoff(1)).isEqualTo(Duration.ofSeconds(10));
         assertThat(relay.backoff(2)).isEqualTo(Duration.ofSeconds(20));
