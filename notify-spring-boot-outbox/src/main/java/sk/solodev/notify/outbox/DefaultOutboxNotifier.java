@@ -1,8 +1,7 @@
 package sk.solodev.notify.outbox;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import sk.solodev.notify.NotificationRequest;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -19,13 +18,13 @@ public class DefaultOutboxNotifier implements OutboxNotifier {
 
     private final OutboxStore store;
 
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
 
     private final OutboxProperties properties;
 
-    public DefaultOutboxNotifier(OutboxStore store, ObjectMapper objectMapper, OutboxProperties properties) {
+    public DefaultOutboxNotifier(OutboxStore store, JsonMapper jsonMapper, OutboxProperties properties) {
         this.store = store;
-        this.objectMapper = objectMapper;
+        this.jsonMapper = jsonMapper;
         this.properties = properties;
     }
 
@@ -33,18 +32,10 @@ public class DefaultOutboxNotifier implements OutboxNotifier {
     public UUID enqueue(NotificationRequest request) {
         var id = UUID.randomUUID();
         var now = Instant.now();
-        var entry = new OutboxEntry(id, request.getClass().getName(), serialize(request),
-                OutboxStatus.PENDING, 0, properties.maxAttempts(), null, null, now, now, null);
+        var entry = new OutboxEntry(id, request.getClass().getName(),
+                jsonMapper.writeValueAsString(request), OutboxStatus.PENDING, 0,
+                properties.maxAttempts(), null, null, now, now, null);
         store.insert(entry);
         return id;
-    }
-
-    private String serialize(NotificationRequest request) {
-        try {
-            return objectMapper.writeValueAsString(request);
-        } catch (JsonProcessingException ex) {
-            throw new IllegalArgumentException(
-                    "Cannot serialize " + request.getClass().getName() + " for the outbox", ex);
-        }
     }
 }

@@ -1,6 +1,5 @@
 package sk.solodev.notify.outbox;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -11,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import sk.solodev.notify.Notifier;
+import tools.jackson.databind.json.JsonMapper;
 
 import javax.sql.DataSource;
 
@@ -37,16 +37,16 @@ public class OutboxAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public OutboxNotifier outboxNotifier(OutboxStore store, ObjectMapper objectMapper,
+    public OutboxNotifier outboxNotifier(OutboxStore store, JsonMapper jsonMapper,
                                          OutboxProperties properties) {
-        return new DefaultOutboxNotifier(store, objectMapper, properties);
+        return new DefaultOutboxNotifier(store, jsonMapper, properties);
     }
 
     @Bean
     @ConditionalOnMissingBean
     public OutboxRelay outboxRelay(Notifier notifier, OutboxStore store,
-                                   ObjectMapper objectMapper, OutboxProperties properties) {
-        return new OutboxRelay(notifier, store, objectMapper, properties);
+                                   JsonMapper jsonMapper, OutboxProperties properties) {
+        return new OutboxRelay(notifier, store, jsonMapper, properties);
     }
 
     @Bean

@@ -1,11 +1,10 @@
 package sk.solodev.notify.outbox;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sk.solodev.notify.NotificationRequest;
 import sk.solodev.notify.Notifier;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -27,15 +26,15 @@ public class OutboxRelay {
 
     private final OutboxStore store;
 
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
 
     private final OutboxProperties properties;
 
-    public OutboxRelay(Notifier notifier, OutboxStore store, ObjectMapper objectMapper,
+    public OutboxRelay(Notifier notifier, OutboxStore store, JsonMapper jsonMapper,
                        OutboxProperties properties) {
         this.notifier = notifier;
         this.store = store;
-        this.objectMapper = objectMapper;
+        this.jsonMapper = jsonMapper;
         this.properties = properties;
     }
 
@@ -51,9 +50,9 @@ public class OutboxRelay {
     private void deliver(OutboxEntry entry) {
         NotificationRequest request;
         try {
-            request = (NotificationRequest) objectMapper.readValue(
+            request = (NotificationRequest) jsonMapper.readValue(
                     entry.payload(), Class.forName(entry.requestType()));
-        } catch (ClassNotFoundException | ClassCastException | JsonProcessingException ex) {
+        } catch (ClassNotFoundException ex) {
             log.error("Outbox entry {} has an undeserializable payload of type {}; marking failed",
                     entry.id(), entry.requestType(), ex);
             store.markFailed(entry.id(), ex.getMessage());
