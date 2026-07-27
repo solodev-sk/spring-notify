@@ -10,7 +10,7 @@ class NoOpOutboxTracePropagatorTest {
 
     @Test
     void capturesNothing() {
-        assertThat(propagator.capture()).isNull();
+        assertThat(propagator.capture()).isEmpty();
     }
 
     @Test

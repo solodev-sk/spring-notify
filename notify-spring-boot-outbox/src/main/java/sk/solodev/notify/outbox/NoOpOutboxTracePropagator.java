@@ -2,6 +2,7 @@ package sk.solodev.notify.outbox;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -14,8 +15,8 @@ import java.util.function.Supplier;
 public class NoOpOutboxTracePropagator implements OutboxTracePropagator {
 
     @Override
-    public @Nullable String capture() {
-        return null;
+    public Optional<String> capture() {
+        return Optional.empty();
     }
 
     @Override

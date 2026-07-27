@@ -2,6 +2,7 @@ package sk.solodev.notify.outbox;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -20,9 +21,9 @@ public interface OutboxTracePropagator {
     /**
      * Serialize the trace context active on the calling thread.
      *
-     * @return the serialized context, or {@code null} when there is nothing to propagate
+     * @return the serialized context, or empty when there is nothing to propagate
      */
-    @Nullable String capture();
+    Optional<String> capture();
 
     /**
      * Run {@code delivery} with {@code traceContext} restored, so spans it records descend from the
