@@ -35,7 +35,7 @@ class MicrometerOutboxTracePropagatorTest {
 
         var span = tracer.nextSpan().start();
         String captured;
-        try (var ignored = tracer.withSpan(span)) {
+        try (var _ = tracer.withSpan(span)) {
             captured = sut.capture().orElse(null);
         } finally {
             span.end();
@@ -54,7 +54,7 @@ class MicrometerOutboxTracePropagatorTest {
 
         var span = tracer.nextSpan().start();
         String captured;
-        try (var ignored = tracer.withSpan(span)) {
+        try (var _ = tracer.withSpan(span)) {
             captured = sut.capture().orElse(null);
         } finally {
             span.end();
@@ -96,7 +96,7 @@ class MicrometerOutboxTracePropagatorTest {
         var originalSpan = tracer.nextSpan().start();
         String originalTraceId = originalSpan.context().traceId();
         String captured;
-        try (var ignored = tracer.withSpan(originalSpan)) {
+        try (var _ = tracer.withSpan(originalSpan)) {
             captured = sut.capture().orElse(null);
         } finally {
             originalSpan.end();
@@ -127,7 +127,7 @@ class MicrometerOutboxTracePropagatorTest {
 
         var span = tracer.nextSpan().start();
         String captured;
-        try (var ignored = tracer.withSpan(span)) {
+        try (var _ = tracer.withSpan(span)) {
             captured = sut.capture().orElse(null);
         } finally {
             span.end();
@@ -161,10 +161,8 @@ class MicrometerOutboxTracePropagatorTest {
 
         @Override
         public <C> void inject(TraceContext context, C carrier, Setter<C> setter) {
-            if (context != null) {
-                setter.set(carrier, "traceparent",
-                        "00-" + context.traceId() + "-" + context.spanId() + "-01");
-            }
+            setter.set(carrier, "traceparent",
+                    "00-" + context.traceId() + "-" + context.spanId() + "-01");
         }
 
         @Override

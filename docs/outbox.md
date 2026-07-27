@@ -74,7 +74,22 @@ The DDL is written for PostgreSQL. For MySQL 8+, use `CHAR(36)` for `id` and `DA
 timestamps. The relay's claim query uses `FOR UPDATE SKIP LOCKED`, which requires **PostgreSQL or
 MySQL 8.0+**.
 
+The table includes:
+- `id` — outbox entry id (UUID)
+- `request_type` / `payload` — the serialized notification request
+- `status` / `attempts` / `max_attempts` — relay state
+- `message_id` / `last_error` — delivery outcome
+- `created_at` / `next_attempt_at` / `sent_at` — timing
+- `trace_context` — W3C trace parent (VARCHAR(512), nullable)
+
 Override the table name with `spring.notify.outbox.table-name` if `notification_outbox` clashes.
+
+**Existing deployments:** if you are adding the outbox module to a running application, migrate the
+schema:
+
+```sql
+ALTER TABLE notification_outbox ADD COLUMN trace_context VARCHAR(512);
+```
 
 ## How delivery works
 
@@ -98,6 +113,24 @@ bypassing them.
 **Multi-instance safe.** `SKIP LOCKED` means concurrent relays on different instances claim
 disjoint rows, so you can run the outbox on every instance without double-sending. No leader
 election required.
+
+## Observability
+
+The enqueue and the eventual delivery are linked into one trace. When you call
+`outbox.enqueue(request)` inside a transactional method, the outbox captures the ambient W3C trace
+context and stores it in the `trace_context` column. Later, when the `OutboxRelay` delivers the
+entry, it restores that context around the delivery so the delivery span descends from the request
+that enqueued it — the full notification flow appears as a single, connected trace despite the
+durable boundary.
+
+This requires **micrometer-tracing** and a bridge (e.g.
+`io.micrometer:micrometer-tracing-bridge-brave`) on the classpath. Without tracing, the outbox
+works exactly as before: the `trace_context` column stays null, and each delivery starts an
+unparented span.
+
+Each retry is its own child span under the original enqueue trace. If a stored context cannot be
+restored — the serialization format changed between enqueue and delivery — the delivery degrades to
+an unparented span rather than failing.
 
 ## Retries and failure
 
