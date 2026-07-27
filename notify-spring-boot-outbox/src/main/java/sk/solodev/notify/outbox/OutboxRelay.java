@@ -39,12 +39,20 @@ public class OutboxRelay {
         this.properties = properties;
     }
 
-    /** Claim a batch of due entries and attempt delivery of each. */
+    /**
+     * Claim a batch of due entries and attempt delivery of each. Never throws: an infrastructure
+     * failure (the database being unreachable, say) is logged and the next poll simply tries again,
+     * so a transient outage cannot stop the relay permanently.
+     */
     public void poll() {
-        var now = Instant.now();
-        var batch = store.claimBatch(properties.batchSize(), now);
-        for (var entry : batch) {
-            deliver(entry);
+        try {
+            var batch = store.claimBatch(properties.batchSize(), Instant.now());
+            for (var entry : batch) {
+                deliver(entry);
+            }
+        } catch (RuntimeException ex) {
+            log.warn("Outbox poll failed; retrying at the next interval: {}", ex.getMessage());
+            log.debug("Outbox poll failure", ex);
         }
     }
 

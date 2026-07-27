@@ -4,15 +4,16 @@ import org.junit.jupiter.api.Test;
 import sk.solodev.notify.NotificationDeliveryException;
 import sk.solodev.notify.NotificationRequest;
 import sk.solodev.notify.Notifier;
+import sk.solodev.notify.test.RecordingNotifier;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 class OutboxRelayTest {
 
@@ -68,29 +69,12 @@ class OutboxRelayTest {
         }
     }
 
-    /** Records what it was asked to deliver; optionally fails. */
-    static class StubNotifier implements Notifier {
+    private static RecordingNotifier notifier() {
+        return new RecordingNotifier().returning("PROVIDER-MID");
+    }
 
-        private final RuntimeException failure;
-
-        final List<NotificationRequest> delivered = new ArrayList<>();
-
-        StubNotifier() {
-            this(null);
-        }
-
-        StubNotifier(RuntimeException failure) {
-            this.failure = failure;
-        }
-
-        @Override
-        public String notify(NotificationRequest request) {
-            delivered.add(request);
-            if (failure != null) {
-                throw failure;
-            }
-            return "PROVIDER-MID";
-        }
+    private static RecordingNotifier failingNotifier() {
+        return notifier().failWith(deliveryFailure());
     }
 
     private static OutboxEntry entry(int attempts, String requestType, String payload) {
@@ -111,11 +95,11 @@ class OutboxRelayTest {
     @Test
     void deliversThePendingEntryThroughTheNotifier() {
         var store = new FakeStore(pending(0));
-        var notifier = new StubNotifier();
+        var notifier = notifier();
 
         relay(notifier, store).poll();
 
-        assertThat(notifier.delivered).singleElement()
+        assertThat(notifier.sent()).singleElement()
                 .isInstanceOf(SampleRequest.class)
                 .satisfies(request -> assertThat(((SampleRequest) request).to())
                         .isEqualTo("+421900123456"));
@@ -125,7 +109,7 @@ class OutboxRelayTest {
     void recordsTheProviderMessageIdOnSuccess() {
         var store = new FakeStore(pending(0));
 
-        relay(new StubNotifier(), store).poll();
+        relay(notifier(), store).poll();
 
         assertThat(store.outcome).isEqualTo("sent");
         assertThat(store.messageId).isEqualTo("PROVIDER-MID");
@@ -134,7 +118,7 @@ class OutboxRelayTest {
     @Test
     void schedulesARetryWhenAttemptsRemain() {
         var store = new FakeStore(pending(0));
-        var notifier = new StubNotifier(deliveryFailure());
+        var notifier = failingNotifier();
         var before = Instant.now();
 
         relay(notifier, store).poll();
@@ -150,7 +134,7 @@ class OutboxRelayTest {
         // attempts=2, maxAttempts=3 → this failure is the last one
         var store = new FakeStore(pending(2));
 
-        relay(new StubNotifier(deliveryFailure()), store).poll();
+        relay(failingNotifier(), store).poll();
 
         assertThat(store.outcome).isEqualTo("failed");
     }
@@ -158,49 +142,74 @@ class OutboxRelayTest {
     @Test
     void abandonsAnEntryWhoseRequestTypeNoLongerExists() {
         var store = new FakeStore(entry(0, "com.example.Removed", "{}"));
-        var notifier = new StubNotifier();
+        var notifier = notifier();
 
         relay(notifier, store).poll();
 
         assertThat(store.outcome).isEqualTo("failed");
-        assertThat(notifier.delivered).isEmpty();
+        assertThat(notifier.sent()).isEmpty();
     }
 
     @Test
     void abandonsAnEntryWithAMalformedPayloadInsteadOfBlockingTheBatch() {
         var store = new FakeStore(entry(0, SampleRequest.class.getName(), "not json"));
-        var notifier = new StubNotifier();
+        var notifier = notifier();
 
         relay(notifier, store).poll();
 
         assertThat(store.outcome).isEqualTo("failed");
-        assertThat(notifier.delivered).isEmpty();
+        assertThat(notifier.sent()).isEmpty();
     }
 
     @Test
     void deliversEveryEntryInTheBatch() {
         var store = new FakeStore(pending(0), pending(0), pending(0));
-        var notifier = new StubNotifier();
+        var notifier = notifier();
 
         relay(notifier, store).poll();
 
-        assertThat(notifier.delivered).hasSize(3);
+        assertThat(notifier.sent()).hasSize(3);
     }
 
     @Test
     void doesNothingWhenThereIsNoWork() {
         var store = new FakeStore();
-        var notifier = new StubNotifier();
+        var notifier = notifier();
 
         relay(notifier, store).poll();
 
-        assertThat(notifier.delivered).isEmpty();
+        assertThat(notifier.sent()).isEmpty();
         assertThat(store.outcome).isNull();
     }
 
     @Test
+    void survivesAnUnreachableStoreSoATransientOutageDoesNotStopTheRelay() {
+        var store = new OutboxStore() {
+
+            @Override
+            public void insert(OutboxEntry entry) { }
+
+            @Override
+            public List<OutboxEntry> claimBatch(int batchSize, Instant now) {
+                throw new IllegalStateException("database is down");
+            }
+
+            @Override
+            public void markSent(UUID id, String messageId, Instant sentAt) { }
+
+            @Override
+            public void markForRetry(UUID id, String lastError, Instant nextAttemptAt) { }
+
+            @Override
+            public void markFailed(UUID id, String lastError) { }
+        };
+
+        assertThatCode(() -> relay(notifier(), store).poll()).doesNotThrowAnyException();
+    }
+
+    @Test
     void backoffGrowsExponentiallyAndIsCapped() {
-        var relay = relay(new StubNotifier(), new FakeStore());
+        var relay = relay(notifier(), new FakeStore());
 
         assertThat(relay.backoff(1)).isEqualTo(Duration.ofSeconds(10));
         assertThat(relay.backoff(2)).isEqualTo(Duration.ofSeconds(20));

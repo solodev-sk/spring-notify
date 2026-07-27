@@ -84,8 +84,7 @@ class OutboxAutoConfigurationTest {
 
     @Test
     void bindsTheConfiguredProperties() {
-        runner.withPropertyValues("spring.notify.outbox.poll-interval=250ms",
-                        "spring.notify.outbox.batch-size=7",
+        runner.withPropertyValues("spring.notify.outbox.batch-size=7",
                         "spring.notify.outbox.table-name=my_outbox")
                 .run(context -> {
                     var properties = context.getBean(OutboxProperties.class);
