@@ -18,7 +18,7 @@
 
     <properties>
         <java.version>25</java.version>
-        <spring-notify.version>1.1.0-SNAPSHOT</spring-notify.version>
+        <spring-notify.version>1.1.1-SNAPSHOT</spring-notify.version>
     </properties>
 
     <dependencyManagement>
