@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS notification_outbox (
     last_error       TEXT,
     created_at       TIMESTAMP    NOT NULL,
     next_attempt_at  TIMESTAMP    NOT NULL,
-    sent_at          TIMESTAMP
+    sent_at          TIMESTAMP,
+    trace_context    VARCHAR(512)
 );
 
 CREATE INDEX IF NOT EXISTS idx_notification_outbox_poll

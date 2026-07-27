@@ -34,7 +34,7 @@ public class DefaultOutboxNotifier implements OutboxNotifier {
         var now = Instant.now();
         var entry = new OutboxEntry(id, request.getClass().getName(),
                 jsonMapper.writeValueAsString(request), OutboxStatus.PENDING, 0,
-                properties.maxAttempts(), null, null, now, now, null);
+                properties.maxAttempts(), null, null, now, now, null, null);
         store.insert(entry);
         return id;
     }

@@ -37,7 +37,7 @@ class OutboxRelayTest {
     private static OutboxEntry entry(int attempts, String requestType, String payload) {
         var now = Instant.now();
         return new OutboxEntry(UUID.randomUUID(), requestType, payload, OutboxStatus.PENDING,
-                attempts, 3, null, null, now, now, null);
+                attempts, 3, null, null, now, now, null, null);
     }
 
     private static OutboxEntry pending(int attempts) {

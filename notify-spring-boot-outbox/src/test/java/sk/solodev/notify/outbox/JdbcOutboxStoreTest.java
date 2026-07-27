@@ -45,7 +45,7 @@ class JdbcOutboxStoreTest {
     private OutboxEntry pending(Instant nextAttemptAt) {
         var now = Instant.now().truncatedTo(ChronoUnit.MILLIS);
         return new OutboxEntry(UUID.randomUUID(), "com.example.SampleRequest", "{\"to\":\"x\"}",
-                OutboxStatus.PENDING, 0, 5, null, null, now, nextAttemptAt, null);
+                OutboxStatus.PENDING, 0, 5, null, null, now, nextAttemptAt, null, null);
     }
 
     private String statusOf(UUID id) {
@@ -149,5 +149,29 @@ class JdbcOutboxStoreTest {
 
         assertThat(statusOf(entry.id())).isEqualTo("FAILED");
         assertThat(store.claimBatch(10, Instant.now().plusSeconds(3600))).isEmpty();
+    }
+
+    @Test
+    void roundTripsTheTraceContext() {
+        var now = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+        var traced = new OutboxEntry(UUID.randomUUID(), "com.example.SampleRequest", "{}",
+                OutboxStatus.PENDING, 0, 5, null, null, now, now.minusSeconds(1), null,
+                "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
+
+        store.insert(traced);
+
+        assertThat(store.claimBatch(10, Instant.now())).singleElement()
+                .satisfies(claimed -> assertThat(claimed.traceContext())
+                        .isEqualTo("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01"));
+    }
+
+    @Test
+    void storesEntriesWithoutATraceContext() {
+        var entry = pending(Instant.now().minusSeconds(1));
+
+        store.insert(entry);
+
+        assertThat(store.claimBatch(10, Instant.now())).singleElement()
+                .satisfies(claimed -> assertThat(claimed.traceContext()).isNull());
     }
 }

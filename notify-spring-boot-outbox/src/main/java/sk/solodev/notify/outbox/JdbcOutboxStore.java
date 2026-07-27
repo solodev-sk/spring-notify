@@ -31,12 +31,13 @@ public class JdbcOutboxStore implements OutboxStore {
     @Override
     public void insert(OutboxEntry e) {
         jdbcClient.sql("INSERT INTO " + tableName + " (id, request_type, payload, status, attempts, "
-                        + "max_attempts, message_id, last_error, created_at, next_attempt_at, sent_at) "
-                        + "VALUES (?,?,?,?,?,?,?,?,?,?,?)")
+                        + "max_attempts, message_id, last_error, created_at, next_attempt_at, sent_at, "
+                        + "trace_context) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)")
                 .param(e.id()).param(e.requestType()).param(e.payload()).param(e.status().name())
                 .param(e.attempts()).param(e.maxAttempts()).param(e.messageId()).param(e.lastError())
                 .param(Timestamp.from(e.createdAt())).param(Timestamp.from(e.nextAttemptAt()))
                 .param(e.sentAt() == null ? null : Timestamp.from(e.sentAt()))
+                .param(e.traceContext())
                 .update();
     }
 
@@ -44,9 +45,9 @@ public class JdbcOutboxStore implements OutboxStore {
     @Transactional
     public List<OutboxEntry> claimBatch(int batchSize, Instant now) {
         return jdbcClient.sql("SELECT id, request_type, payload, status, attempts, max_attempts, "
-                        + "message_id, last_error, created_at, next_attempt_at, sent_at FROM " + tableName
-                        + " WHERE status = 'PENDING' AND next_attempt_at <= ? ORDER BY created_at "
-                        + "FOR UPDATE SKIP LOCKED LIMIT ?")
+                        + "message_id, last_error, created_at, next_attempt_at, sent_at, trace_context "
+                        + "FROM " + tableName + " WHERE status = 'PENDING' AND next_attempt_at <= ? "
+                        + "ORDER BY created_at FOR UPDATE SKIP LOCKED LIMIT ?")
                 .param(Timestamp.from(now)).param(batchSize)
                 .query((rs, rowNum) -> new OutboxEntry(
                         rs.getObject("id", UUID.class),
@@ -59,7 +60,8 @@ public class JdbcOutboxStore implements OutboxStore {
                         rs.getString("last_error"),
                         rs.getTimestamp("created_at").toInstant(),
                         rs.getTimestamp("next_attempt_at").toInstant(),
-                        rs.getTimestamp("sent_at") == null ? null : rs.getTimestamp("sent_at").toInstant()))
+                        rs.getTimestamp("sent_at") == null ? null : rs.getTimestamp("sent_at").toInstant(),
+                        rs.getString("trace_context")))
                 .list();
     }
 
