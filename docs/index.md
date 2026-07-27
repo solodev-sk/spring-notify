@@ -20,6 +20,7 @@ notifier.notify(SmsRequest.builder()
 - [Providers](providers.md) — the provider matrix and per-provider configuration.
 - [Interceptors](interceptors.md) — wrap every send for logging, rate limiting, retry, kill switches.
 - [Observability & events](observability-and-events.md) — Micrometer observation, lifecycle events, interceptor ordering.
+- [Transactional outbox](outbox.md) — durable sends that commit with your business transaction.
 - [Testing](testing.md) — asserting notifications with `RecordingNotifier`.
 
 > Latest release: `1.0.0` (on Maven Central) · Java 25 · Spring Boot 4.1.

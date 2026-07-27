@@ -1,0 +1,212 @@
+package sk.solodev.notify.outbox;
+
+import org.junit.jupiter.api.Test;
+import sk.solodev.notify.NotificationDeliveryException;
+import sk.solodev.notify.NotificationRequest;
+import sk.solodev.notify.Notifier;
+import sk.solodev.notify.test.RecordingNotifier;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Supplier;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+
+class OutboxRelayTest {
+
+    record SampleRequest(String to) implements NotificationRequest { }
+
+    private static final JsonMapper JSON = JsonMapper.builder().build();
+
+    private static final OutboxProperties PROPERTIES = new OutboxProperties(
+            Duration.ofSeconds(5), 100, 3, Duration.ofSeconds(10), Duration.ofMinutes(10),
+            "notification_outbox");
+
+
+    private static RecordingNotifier notifier() {
+        return new RecordingNotifier().returning("PROVIDER-MID");
+    }
+
+    private static RecordingNotifier failingNotifier() {
+        return notifier().failWith(deliveryFailure());
+    }
+
+    private static OutboxEntry entry(int attempts, String requestType, String payload) {
+        var now = Instant.now();
+        return new OutboxEntry(UUID.randomUUID(), requestType, payload, OutboxStatus.PENDING,
+                attempts, 3, null, null, now, now, null, null);
+    }
+
+    private static OutboxEntry pending(int attempts) {
+        return entry(attempts, SampleRequest.class.getName(),
+                JSON.writeValueAsString(new SampleRequest("+421900123456")));
+    }
+
+    private static OutboxRelay relay(Notifier notifier, OutboxStore store) {
+        return new OutboxRelay(notifier, store, JSON, PROPERTIES, new NoOpOutboxTracePropagator());
+    }
+
+    @Test
+    void deliversThePendingEntryThroughTheNotifier() {
+        var store = new RecordingOutboxStore(pending(0));
+        var notifier = notifier();
+
+        relay(notifier, store).poll();
+
+        assertThat(notifier.sent()).singleElement()
+                .isInstanceOf(SampleRequest.class)
+                .satisfies(request -> assertThat(((SampleRequest) request).to())
+                        .isEqualTo("+421900123456"));
+    }
+
+    @Test
+    void recordsTheProviderMessageIdOnSuccess() {
+        var store = new RecordingOutboxStore(pending(0));
+
+        relay(notifier(), store).poll();
+
+        assertThat(store.outcome).isEqualTo("sent");
+        assertThat(store.messageId).isEqualTo("PROVIDER-MID");
+    }
+
+    @Test
+    void schedulesARetryWhenAttemptsRemain() {
+        var store = new RecordingOutboxStore(pending(0));
+        var notifier = failingNotifier();
+        var before = Instant.now();
+
+        relay(notifier, store).poll();
+
+        assertThat(store.outcome).isEqualTo("retry");
+        assertThat(store.lastError).isNotBlank();
+        // initial backoff is 10s
+        assertThat(store.nextAttemptAt).isAfter(before.plusSeconds(9));
+    }
+
+    @Test
+    void abandonsTheEntryOnTheFinalAttempt() {
+        // attempts=2, maxAttempts=3 → this failure is the last one
+        var store = new RecordingOutboxStore(pending(2));
+
+        relay(failingNotifier(), store).poll();
+
+        assertThat(store.outcome).isEqualTo("failed");
+    }
+
+    @Test
+    void abandonsAnEntryWhoseRequestTypeNoLongerExists() {
+        var store = new RecordingOutboxStore(entry(0, "com.example.Removed", "{}"));
+        var notifier = notifier();
+
+        relay(notifier, store).poll();
+
+        assertThat(store.outcome).isEqualTo("failed");
+        assertThat(notifier.sent()).isEmpty();
+    }
+
+    @Test
+    void abandonsAnEntryWithAMalformedPayloadInsteadOfBlockingTheBatch() {
+        var store = new RecordingOutboxStore(entry(0, SampleRequest.class.getName(), "not json"));
+        var notifier = notifier();
+
+        relay(notifier, store).poll();
+
+        assertThat(store.outcome).isEqualTo("failed");
+        assertThat(notifier.sent()).isEmpty();
+    }
+
+    @Test
+    void deliversEveryEntryInTheBatch() {
+        var store = new RecordingOutboxStore(pending(0), pending(0), pending(0));
+        var notifier = notifier();
+
+        relay(notifier, store).poll();
+
+        assertThat(notifier.sent()).hasSize(3);
+    }
+
+    @Test
+    void doesNothingWhenThereIsNoWork() {
+        var store = new RecordingOutboxStore();
+        var notifier = notifier();
+
+        relay(notifier, store).poll();
+
+        assertThat(notifier.sent()).isEmpty();
+        assertThat(store.outcome).isNull();
+    }
+
+    @Test
+    void survivesAnUnreachableStoreSoATransientOutageDoesNotStopTheRelay() {
+        var store = new OutboxStore() {
+
+            @Override
+            public void insert(OutboxEntry entry) { }
+
+            @Override
+            public List<OutboxEntry> claimBatch(int batchSize, Instant now) {
+                throw new IllegalStateException("database is down");
+            }
+
+            @Override
+            public void markSent(UUID id, String messageId, Instant sentAt) { }
+
+            @Override
+            public void markForRetry(UUID id, String lastError, Instant nextAttemptAt) { }
+
+            @Override
+            public void markFailed(UUID id, String lastError) { }
+        };
+
+        assertThatCode(() -> relay(notifier(), store).poll()).doesNotThrowAnyException();
+    }
+
+    @Test
+    void backoffGrowsExponentiallyAndIsCapped() {
+        var relay = relay(notifier(), new RecordingOutboxStore());
+
+        assertThat(relay.backoff(1)).isEqualTo(Duration.ofSeconds(10));
+        assertThat(relay.backoff(2)).isEqualTo(Duration.ofSeconds(20));
+        assertThat(relay.backoff(3)).isEqualTo(Duration.ofSeconds(40));
+        // capped at maxBackoff (10m)
+        assertThat(relay.backoff(30)).isEqualTo(Duration.ofMinutes(10));
+    }
+
+    @Test
+    void restoresTheStoredTraceContextAroundTheDelivery() {
+        var seen = new ArrayList<String>();
+        var propagator = new OutboxTracePropagator() {
+
+            @Override
+            public Optional<String> capture() {
+                return Optional.empty();
+            }
+
+            @Override
+            public <T> T withRestoredContext(String traceContext, Supplier<T> delivery) {
+                seen.add(traceContext);
+                return delivery.get();
+            }
+        };
+        var entry = new OutboxEntry(UUID.randomUUID(), SampleRequest.class.getName(),
+                JSON.writeValueAsString(new SampleRequest("+421900123456")), OutboxStatus.PENDING,
+                0, 3, null, null, Instant.now(), Instant.now(), null, "stored-context");
+        var store = new RecordingOutboxStore(entry);
+
+        new OutboxRelay(notifier(), store, JSON, PROPERTIES, propagator).poll();
+
+        assertThat(seen).containsExactly("stored-context");
+        assertThat(store.outcome).isEqualTo("sent");
+    }
+
+    private static NotificationDeliveryException deliveryFailure() {
+        return new NotificationDeliveryException("provider rejected",
+                new SampleRequest("+421900123456"), new RuntimeException("503"));
+    }
+}

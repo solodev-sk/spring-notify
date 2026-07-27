@@ -105,6 +105,8 @@ documents the request fields.
   dead-lettering, or retry. → [Observability & events](docs/observability-and-events.md#events)
 - **Interceptors** — wrap every send (or one channel) for logging, rate limiting, retry, kill
   switches. → [Interceptors](docs/interceptors.md)
+- **Transactional outbox** — persist a send in your business transaction; a relay delivers it
+  durably afterwards, safe across instances. → [Transactional outbox](docs/outbox.md)
 - **Test double** — `RecordingNotifier` asserts sends without a real provider.
   → [Testing](docs/testing.md)
 
