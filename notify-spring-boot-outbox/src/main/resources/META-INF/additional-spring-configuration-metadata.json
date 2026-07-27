@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "spring.notify.outbox.batch-size",
+      "type": "java.lang.Integer",
+      "defaultValue": 100
+    },
+    {
+      "name": "spring.notify.outbox.max-attempts",
+      "type": "java.lang.Integer",
+      "defaultValue": 5
+    }
+  ]
+}
