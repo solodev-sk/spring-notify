@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class MicrometerOutboxTracePropagatorTest {
 
     @Test
-    void should_return_empty_when_no_span_is_active() {
+    void returnsEmptyWhenNoSpanIsActive() {
         var tracer = new SimpleTracer();
         var propagator = new TestPropagator();
         var sut = new MicrometerOutboxTracePropagator(tracer, propagator);
@@ -28,7 +28,7 @@ class MicrometerOutboxTracePropagatorTest {
     }
 
     @Test
-    void should_capture_trace_context_when_span_is_active() {
+    void capturesTheTraceContextWhenASpanIsActive() {
         var tracer = new SimpleTracer();
         var propagator = new TestPropagator();
         var sut = new MicrometerOutboxTracePropagator(tracer, propagator);
@@ -47,7 +47,7 @@ class MicrometerOutboxTracePropagatorTest {
     }
 
     @Test
-    void should_run_delivery_and_return_its_value_with_restored_context() {
+    void runsTheDeliveryAndReturnsItsValueWithARestoredContext() {
         var tracer = new SimpleTracer();
         var propagator = new TestPropagator();
         var sut = new MicrometerOutboxTracePropagator(tracer, propagator);
@@ -66,7 +66,7 @@ class MicrometerOutboxTracePropagatorTest {
     }
 
     @Test
-    void should_run_delivery_when_trace_context_is_null() {
+    void runsTheDeliveryWhenThereIsNoStoredContext() {
         var tracer = new SimpleTracer();
         var propagator = new TestPropagator();
         var sut = new MicrometerOutboxTracePropagator(tracer, propagator);
@@ -77,7 +77,7 @@ class MicrometerOutboxTracePropagatorTest {
     }
 
     @Test
-    void should_run_delivery_even_with_malformed_context() {
+    void runsTheDeliveryEvenWhenTheStoredContextIsMalformed() {
         var tracer = new SimpleTracer();
         var propagator = new TestPropagator();
         var sut = new MicrometerOutboxTracePropagator(tracer, propagator);
@@ -88,7 +88,7 @@ class MicrometerOutboxTracePropagatorTest {
     }
 
     @Test
-    void should_propagate_trace_id_through_round_trip() {
+    void carriesTheTraceIdThroughACaptureAndRestoreRoundTrip() {
         var tracer = new SimpleTracer();
         var propagator = new TestPropagator();
         var sut = new MicrometerOutboxTracePropagator(tracer, propagator);
@@ -107,7 +107,7 @@ class MicrometerOutboxTracePropagatorTest {
 
         // Verify delivery runs (the TestSpan created by our propagator isn't recognized by
         // SimpleTracer as "current", which is a limitation of the test infrastructure.
-        // The actual parent-child link verification happens in the end-to-end test in a later task.)
+        // The actual parent-child link verification happens in OutboxTracePropagationOtelTest.)
         var deliveryRan = new AtomicBoolean(false);
         sut.withRestoredContext(captured, () -> {
             deliveryRan.set(true);
@@ -120,7 +120,7 @@ class MicrometerOutboxTracePropagatorTest {
     }
 
     @Test
-    void should_restore_context_before_running_delivery() {
+    void restoresTheContextBeforeRunningTheDelivery() {
         var tracer = new SimpleTracer();
         var propagator = new TestPropagator();
         var sut = new MicrometerOutboxTracePropagator(tracer, propagator);
