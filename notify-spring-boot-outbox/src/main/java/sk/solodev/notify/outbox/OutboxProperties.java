@@ -7,7 +7,6 @@ import java.time.Duration;
 /**
  * Outbox settings, under {@code spring.notify.outbox}.
  *
- * @param enabled        master switch for the outbox autoconfiguration (default {@code false})
  * @param pollInterval   how often the relay polls for pending entries (default 5s)
  * @param batchSize      rows claimed per poll (default 100)
  * @param maxAttempts    delivery attempts before an entry is marked {@code FAILED} (default 5)
@@ -19,9 +18,8 @@ import java.time.Duration;
  * @since 1.0.1
  */
 @ConfigurationProperties("spring.notify.outbox")
-public record OutboxProperties(boolean enabled, Duration pollInterval, int batchSize,
-                               int maxAttempts, Duration initialBackoff, Duration maxBackoff,
-                               String tableName) {
+public record OutboxProperties(Duration pollInterval, int batchSize, int maxAttempts,
+                               Duration initialBackoff, Duration maxBackoff, String tableName) {
 
     public OutboxProperties {
         pollInterval = pollInterval == null ? Duration.ofSeconds(5) : pollInterval;
