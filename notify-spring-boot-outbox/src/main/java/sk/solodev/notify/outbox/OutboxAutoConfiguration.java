@@ -53,7 +53,18 @@ public class OutboxAutoConfiguration {
         return new OutboxRelay(notifier, store, jsonMapper, properties, tracePropagator);
     }
 
-    /** Replaces the no-op propagator with real trace propagation when tracing is configured. */
+    /**
+     * Fallback when tracing is absent. Conditional on the tracing beans being missing rather than
+     * relying on {@link TracingConfiguration} being processed first, so which propagator wins does
+     * not depend on declaration order.
+     */
+    @Bean
+    @ConditionalOnMissingBean(value = OutboxTracePropagator.class, type = "io.micrometer.tracing.Tracer")
+    public OutboxTracePropagator noOpOutboxTracePropagator() {
+        return new NoOpOutboxTracePropagator();
+    }
+
+    /** Real trace propagation, when tracing is on the classpath and configured. */
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(Tracer.class)
     @ConditionalOnBean({Tracer.class, Propagator.class})
@@ -64,12 +75,6 @@ public class OutboxAutoConfiguration {
         public OutboxTracePropagator outboxTracePropagator(Tracer tracer, Propagator propagator) {
             return new MicrometerOutboxTracePropagator(tracer, propagator);
         }
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public OutboxTracePropagator outboxTracePropagator() {
-        return new NoOpOutboxTracePropagator();
     }
 
     /**
