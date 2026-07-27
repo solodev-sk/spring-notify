@@ -145,5 +145,11 @@ a `DataSource` bean is present.
 
 Persistence sits behind the `OutboxStore` SPI (`insert`, `claimBatch`, `markSent`, `markForRetry`,
 `markFailed`). The JDBC implementation is registered `@ConditionalOnMissingBean`, so defining your
-own `OutboxStore` bean replaces it — useful for a non-relational store or a different claim
-strategy.
+own `OutboxStore` bean replaces it — useful for a different claim strategy, a dialect the shipped SQL
+does not cover, a table that does not match the canonical layout, or wrapping the store to add
+metrics.
+
+Whatever you implement, `insert` must enlist in the caller's transaction — that is what makes the
+notification commit atomically with the business change. In practice this means a store backed by the
+same transactional datasource as the application; a store that commits independently gives up the
+guarantee the outbox exists to provide.
