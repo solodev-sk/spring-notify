@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: outbox-email
+  sql:
+    init:
+      mode: always
+      schema-locations:
+        - classpath:schema-orders.sql
+        - classpath:schema-notification-outbox.sql
+  notify:
+    outbox:
+      poll-interval: 500ms
+
+logging:
+  level:
+    sk.solodev.notify: DEBUG
