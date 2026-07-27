@@ -75,6 +75,7 @@ public class OutboxRelay {
             var messageId = tracePropagator.withRestoredContext(entry.traceContext(),
                     () -> notifier.notify(request));
             store.markSent(entry.id(), messageId, Instant.now());
+            log.debug("Outbox entry {} delivered as provider message {}", entry.id(), messageId);
         } catch (RuntimeException ex) {
             var nextAttempts = entry.attempts() + 1;
             if (nextAttempts >= entry.maxAttempts()) {

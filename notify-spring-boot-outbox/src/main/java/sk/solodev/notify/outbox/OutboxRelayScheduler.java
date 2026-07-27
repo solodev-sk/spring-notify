@@ -1,6 +1,8 @@
 package sk.solodev.notify.outbox;
 
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.scheduling.TaskScheduler;
 
@@ -15,6 +17,8 @@ import java.util.concurrent.ScheduledFuture;
  * @since 1.1.0
  */
 public class OutboxRelayScheduler implements SmartLifecycle {
+
+    private static final Logger log = LoggerFactory.getLogger(OutboxRelayScheduler.class);
 
     private final OutboxRelay relay;
 
@@ -34,6 +38,7 @@ public class OutboxRelayScheduler implements SmartLifecycle {
     public void start() {
         if (polling == null) {
             polling = taskScheduler.scheduleWithFixedDelay(relay::poll, pollInterval);
+            log.info("Notification outbox relay started, polling every {}", pollInterval);
         }
     }
 
@@ -42,6 +47,7 @@ public class OutboxRelayScheduler implements SmartLifecycle {
         if (polling != null) {
             polling.cancel(false);
             polling = null;
+            log.debug("Notification outbox relay stopped");
         }
     }
 

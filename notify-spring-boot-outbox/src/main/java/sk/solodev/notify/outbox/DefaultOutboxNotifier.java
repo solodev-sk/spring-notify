@@ -1,5 +1,7 @@
 package sk.solodev.notify.outbox;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sk.solodev.notify.NotificationRequest;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -15,6 +17,8 @@ import java.util.UUID;
  * @since 1.1.0
  */
 public class DefaultOutboxNotifier implements OutboxNotifier {
+
+    private static final Logger log = LoggerFactory.getLogger(DefaultOutboxNotifier.class);
 
     private final OutboxStore store;
 
@@ -41,6 +45,7 @@ public class DefaultOutboxNotifier implements OutboxNotifier {
                 properties.maxAttempts(), null, null, now, now, null,
                 tracePropagator.capture().orElse(null));
         store.insert(entry);
+        log.debug("Enqueued {} as outbox entry {}", entry.requestType(), id);
         return id;
     }
 }
