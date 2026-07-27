@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sk.solodev.notify.NotificationRequest;
 import sk.solodev.notify.Notifier;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.time.Duration;
@@ -52,7 +53,7 @@ public class OutboxRelay {
         try {
             request = (NotificationRequest) jsonMapper.readValue(
                     entry.payload(), Class.forName(entry.requestType()));
-        } catch (ClassNotFoundException ex) {
+        } catch (ClassNotFoundException | ClassCastException | JacksonException ex) {
             log.error("Outbox entry {} has an undeserializable payload of type {}; marking failed",
                     entry.id(), entry.requestType(), ex);
             store.markFailed(entry.id(), ex.getMessage());
